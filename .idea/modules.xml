@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/neanderthal.iml" filepath="$PROJECT_DIR$/neanderthal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/neanderthal/neanderthal-neanderthal.iml" filepath="$PROJECT_DIR$/neanderthal/neanderthal-neanderthal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/neanderthal-no-op/neanderthal-no-op.iml" filepath="$PROJECT_DIR$/neanderthal-no-op/neanderthal-no-op.iml" />
+      <module fileurl="file://$PROJECT_DIR$/neanderthal-sample/neanderthal-sample.iml" filepath="$PROJECT_DIR$/neanderthal-sample/neanderthal-sample.iml" />
+    </modules>
+  </component>
+</project>

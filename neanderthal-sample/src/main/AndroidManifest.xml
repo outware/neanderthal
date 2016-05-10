@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="au.com.outware.neanderthalsample">
+
+    <application
+        android:name="au.com.outware.neanderthalsample.SampleApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name="au.com.outware.neanderthalsample.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- You can (optionally) override the default Neanderthal activity to customise the label & icon -->
+        <activity android:name="au.com.outware.neanderthal.presentation.view.activity.VariantListActivity"
+            android:label="@string/neanderthal_name"
+            tools:replace="android:label" />
+    </application>
+
+</manifest>
