@@ -1,0 +1,151 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+buildscript {
+    ext {
+        daggerVersion = '2.4'
+        kotlinVersion = '1.0.1-2'
+        supportLibraryVersion = '23.3.0'
+        ankoVersion = '0.8.3'
+    }
+
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlinVersion"
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
+    }
+}
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'neanderthal'
+
+    publishedGroupId = 'au.com.outware'
+    libraryName = 'neanderthal'
+    artifact = 'neanderthal'
+
+    libraryDescription = 'Neanderthal is a library that allows you to create and modify configuration environments for Android applications at run time.'
+
+    siteUrl = 'https://github.com/outware/neanderthal/'
+    gitUrl = 'https://github.com/outware/neanderthal.git'
+
+    libraryVersion = '1.0.0'
+
+    developerId = 'outware'
+    developerName = 'Outware Mobile'
+    developerEmail = 'technology@outware.com.au'
+
+    licenseName = 'MIT'
+    licenseUrl = 'https://opensource.org/licenses/MIT'
+    allLicenses = ["MIT"]
+}
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+    resourcePrefix "neanderthal_"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+    }
+}
+
+kapt {
+    generateStubs = true
+}
+
+// custom tasks for creating source/javadoc jars
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+group = publishedGroupId
+version = libraryVersion
+
+// Bintray
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+    pkg {
+        repo = bintrayRepo
+        name = bintrayName
+        desc = libraryDescription
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = allLicenses
+        publish = true
+        publicDownloadNumbers = true
+        version {
+            desc = libraryDescription
+        }
+    }
+}
+
+dependencies {
+    compile 'com.google.code.gson:gson:2.4',
+            "com.google.dagger:dagger:$daggerVersion",
+            // Support
+            "com.android.support:appcompat-v7:$supportLibraryVersion",
+            "com.android.support:design:$supportLibraryVersion",
+            "com.android.support:recyclerview-v7:$supportLibraryVersion",
+            // Kotlin
+            "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion",
+            "org.jetbrains.anko:anko-support-v4:0.8.2",
+            //Anko
+             'org.jetbrains.anko:anko-sdk23:0.8.3'
+
+    // Dagger 2
+    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+
+    testCompile "com.nhaarman:mockito-kotlin:0.3.1"
+    testCompile 'org.hamcrest:hamcrest-all:1.3'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.robolectric:robolectric:3.0'
+    testCompile 'org.mockito:mockito-all:1.10.19'
+}

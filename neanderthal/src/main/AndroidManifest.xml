@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="au.com.outware.neanderthal">
+
+    <application>
+        <activity android:name="au.com.outware.neanderthal.presentation.view.activity.VariantListActivity"
+            android:icon="@mipmap/neanderthal_ic_launcher"
+            android:label="@string/neanderthal_app_name"
+            android:taskAffinity="au.com.timmutton.neanderthal"
+            android:theme="@style/neanderthal_AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="au.com.outware.neanderthal.presentation.view.activity.EditVariantActivity"
+            android:icon="@mipmap/neanderthal_ic_launcher"
+            android:taskAffinity="au.com.timmutton.neanderthal"
+            android:theme="@style/neanderthal_AppTheme" />
+    </application>
+</manifest>

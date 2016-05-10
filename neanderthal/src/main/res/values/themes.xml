@@ -1,0 +1,10 @@
+<resources>
+    <!-- Base application theme. -->
+    <style name="neanderthal_AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/neanderthal_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/neanderthal_colorPrimaryDark</item>
+        <item name="colorAccent">@color/neanderthal_colorAccent</item>
+        <item name="android:colorButtonNormal">@color/neanderthal_colorPrimary</item>
+    </style>
+</resources>

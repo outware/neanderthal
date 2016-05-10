@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="neanderthal_colorPrimary">#9C27B0</color>
+    <color name="neanderthal_colorPrimaryDark">#7B1FA2</color>
+    <color name="neanderthal_colorPrimaryLight">#E1BEE7</color>
+    <color name="neanderthal_colorAccent">#4CAF50</color>
+</resources>
