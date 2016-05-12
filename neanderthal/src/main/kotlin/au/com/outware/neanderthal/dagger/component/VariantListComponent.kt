@@ -9,7 +9,7 @@ import dagger.Component
  * @author timmutton
  */
 @ActivityScope
-@Component(dependencies = arrayOf(ApplicationComponent::class), modules = arrayOf(VariantListModule::class))
+@Component(dependencies = arrayOf(NeanderthalApplicationComponent::class), modules = arrayOf(VariantListModule::class))
 interface VariantListComponent {
     fun inject(activity: VariantListActivity)
 }

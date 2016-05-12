@@ -35,7 +35,7 @@ class EditVariantActivity : AppCompatActivity(), EditVariantPresenter.ViewSurfac
         val adapter = PropertyAdapter()
 
         DaggerEditVariantComponent.builder()
-            .applicationComponent(NeanderthalApplication.applicationComponent)
+            .neanderthalApplicationComponent(NeanderthalApplication.neanderthalApplicationComponent)
             .editVariantModule(EditVariantModule(this, adapter))
             .build()
             .inject(this)

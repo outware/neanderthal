@@ -2,7 +2,7 @@ package au.com.outware.neanderthal.dagger.component
 
 import android.content.Context
 import au.com.outware.neanderthal.application.NeanderthalApplication
-import au.com.outware.neanderthal.dagger.module.ApplicationModule
+import au.com.outware.neanderthal.dagger.module.NeanderthallApplicationModule
 import au.com.outware.neanderthal.data.repository.VariantRepository
 import au.com.outware.neanderthal.domain.factory.ConfigurationFactory
 import au.com.outware.neanderthal.domain.interactor.VariantInteractor
@@ -13,8 +13,8 @@ import javax.inject.Singleton
  * @author timmutton
  */
 @Singleton
-@Component(modules = arrayOf(ApplicationModule::class))
-interface ApplicationComponent {
+@Component(modules = arrayOf(NeanderthallApplicationModule::class))
+interface NeanderthalApplicationComponent {
     fun inject(application: NeanderthalApplication)
 
     fun getApplicationContext(): Context

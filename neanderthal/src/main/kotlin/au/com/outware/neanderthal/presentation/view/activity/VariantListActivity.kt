@@ -39,7 +39,7 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         adapter = VariantAdapter { name, position -> presenter.onItemSelected(name, position) }
 
         DaggerVariantListComponent.builder()
-                .applicationComponent(NeanderthalApplication.applicationComponent)
+                .neanderthalApplicationComponent(NeanderthalApplication.neanderthalApplicationComponent)
                 .variantListModule(VariantListModule(this, adapter))
                 .build()
                 .inject(this)
