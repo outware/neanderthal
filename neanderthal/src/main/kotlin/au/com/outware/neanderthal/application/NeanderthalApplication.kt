@@ -1,11 +1,9 @@
 package au.com.outware.neanderthal.application
 
 import android.app.Application
-import au.com.outware.neanderthal.dagger.component.ApplicationComponent
-import au.com.outware.neanderthal.dagger.component.DaggerApplicationComponent
-import au.com.outware.neanderthal.dagger.module.ApplicationModule
-import au.com.outware.neanderthal.domain.interactor.VariantInteractor
-import javax.inject.Inject
+import au.com.outware.neanderthal.dagger.component.DaggerNeanderthalApplicationComponent
+import au.com.outware.neanderthal.dagger.component.NeanderthalApplicationComponent
+import au.com.outware.neanderthal.dagger.module.NeanderthallApplicationModule
 
 /**
  * @author timmutton
@@ -13,21 +11,18 @@ import javax.inject.Inject
 open class NeanderthalApplication : Application() {
     companion object {
         @JvmStatic
-        lateinit var applicationComponent: ApplicationComponent
+        lateinit var neanderthalApplicationComponent: NeanderthalApplicationComponent
     }
 
-    @Inject
-    internal lateinit var variantInteractor: VariantInteractor
-
     fun initialise(klass: Class<out Any>, baseVariants: Map<String, Any>, defaultVariant: String) {
-        applicationComponent = DaggerApplicationComponent.builder()
-                .applicationModule(ApplicationModule(this, klass, baseVariants, defaultVariant))
+        neanderthalApplicationComponent = DaggerNeanderthalApplicationComponent.builder()
+                .neanderthallApplicationModule(NeanderthallApplicationModule(this, klass, baseVariants, defaultVariant))
                 .build()
-        applicationComponent.inject(this)
+        neanderthalApplicationComponent.inject(this)
     }
 
     @Suppress("UNCHECKED_CAST")
     fun <T> getConfiguration(): T {
-        return variantInteractor.getCurrentVariant()?.configuration as T
+        return neanderthalApplicationComponent.getVariantInteractor().getCurrentVariant()?.configuration as T
     }
 }

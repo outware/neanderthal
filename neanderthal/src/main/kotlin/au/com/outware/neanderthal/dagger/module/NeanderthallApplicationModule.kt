@@ -16,10 +16,10 @@ import javax.inject.Singleton
  * @author timmutton
  */
 @Module
-class ApplicationModule(private val application: Application,
-                        private val klass: Class<out Any>,
-                        private val baseVariants: Map<String, Any>,
-                        private val defaultVariant: String) {
+class NeanderthallApplicationModule(private val application: Application,
+                                    private val klass: Class<out Any>,
+                                    private val baseVariants: Map<String, Any>,
+                                    private val defaultVariant: String) {
     @Provides
     @Singleton
     fun provideApplicationContext(): Context = application
