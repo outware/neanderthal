@@ -135,10 +135,7 @@ dependencies {
             "com.android.support:design:$supportLibraryVersion",
             "com.android.support:recyclerview-v7:$supportLibraryVersion",
             // Kotlin
-            "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion",
-            "org.jetbrains.anko:anko-support-v4:0.8.2",
-            //Anko
-             'org.jetbrains.anko:anko-sdk23:0.8.3'
+            "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 
     // Dagger 2
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
