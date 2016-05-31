@@ -1,10 +1,12 @@
 package au.com.outware.neanderthalsample;
 
 import android.support.v7.app.AppCompatDelegate;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
@@ -20,6 +22,7 @@ public class SampleApplication extends NeanderthalApplication {
     public static final String PRODUCTION = "Production";
     public static final String STAGING = "Staging";
     public static final String DEBUG = "Debug";
+    public static final String VARIANTS_FILE = "variants.json";
 
     // If your primary app supports Day/Night mode, so will Neanderthal
     static {
@@ -30,14 +33,18 @@ public class SampleApplication extends NeanderthalApplication {
     public void onCreate() {
         super.onCreate();
 
-        initialiseFromJson();
+        try {
+            initialiseFromJson();
+        } catch (IOException e) {
+            Log.e(this.getClass().getSimpleName(), e.getMessage(), e);
+        }
 //        initialiseByHand();
     }
 
     // An example of how you could initialise Neanderthal from a local JSON file
-    private void initialiseFromJson() {
+    private void initialiseFromJson() throws IOException {
         Gson gson = new GsonBuilder().registerTypeAdapter(CharSequence.class, new CharSequenceDeserializer()).create();
-        Reader reader = new InputStreamReader(getResources().openRawResource(R.raw.variants));
+        Reader reader = new InputStreamReader(getAssets().open(VARIANTS_FILE));
         BaseVariants baseVariants = gson.fromJson(reader, BaseVariants.class);
         initialise(Configuration.class, baseVariants.variants, baseVariants.defaultVariant);
     }
