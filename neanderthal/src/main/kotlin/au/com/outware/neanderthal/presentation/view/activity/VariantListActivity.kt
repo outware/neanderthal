@@ -3,6 +3,7 @@ package au.com.outware.neanderthal.presentation.view.activity
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
@@ -15,14 +16,8 @@ import au.com.outware.neanderthal.presentation.adapter.VariantAdapter
 import au.com.outware.neanderthal.presentation.presenter.EditVariantPresenter
 import au.com.outware.neanderthal.presentation.presenter.VariantListPresenter
 import au.com.outware.neanderthal.util.DividerItemDecoration
-import au.com.outware.neanderthal.util.extensions.action
-import au.com.outware.neanderthal.util.extensions.inflateMenu
-import au.com.outware.neanderthal.util.extensions.snackbar
+import au.com.outware.neanderthal.util.extensions.*
 import kotlinx.android.synthetic.main.neanderthal_activity_variant_list.*
-import org.jetbrains.anko.AlertDialogBuilder
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.startActivity
-import org.jetbrains.anko.startActivityForResult
 import javax.inject.Inject
 
 class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurface {
@@ -30,7 +25,7 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
     lateinit internal var presenter: VariantListPresenter
 
     private lateinit var adapter: VariantAdapter
-    private var dialog: AlertDialogBuilder? = null
+    private var dialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,18 +78,20 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
     }
 
     override fun goToAddVariant() {
-        startActivityForResult<EditVariantActivity>(EditVariantPresenter.ViewSurface.REQUEST_CODE)
+        navigateForResult(EditVariantActivity::class, EditVariantPresenter.ViewSurface.REQUEST_CODE)
     }
 
     override fun goToEditVariant(name: String) {
-        startActivity<EditVariantActivity>(EditVariantPresenter.ViewSurface.EXTRA_NAME to name)
+        navigate(EditVariantActivity::class, EditVariantPresenter.ViewSurface.EXTRA_NAME to name)
     }
 
     override fun createDeleteConfirmation() {
-        dialog = alert(R.string.neanderthal_delete_message, R.string.neanderthal_delete_title) {
-            positiveButton(R.string.neanderthal_delete_positive) { presenter.onDeleteConfirmation(true) }
-            negativeButton(R.string.neanderthal_cancel) { presenter.onDeleteConfirmation(false) }
-        }.show()
+        dialog = AlertDialog.Builder(this)
+                .setTitle(R.string.neanderthal_delete_title)
+                .setMessage(R.string.neanderthal_delete_message)
+                .setPositiveButton(R.string.neanderthal_delete_positive) { dialog, which -> presenter.onDeleteConfirmation(true) }
+                .setNegativeButton(R.string.neanderthal_cancel) { dialog, which -> presenter.onDeleteConfirmation(false) }
+                .show()
     }
 
     override fun dismissDeleteConfirmation() {

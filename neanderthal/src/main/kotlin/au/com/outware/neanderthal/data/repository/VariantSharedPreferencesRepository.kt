@@ -3,11 +3,9 @@ package au.com.outware.neanderthal.data.repository
 import android.content.Context
 import android.content.SharedPreferences
 import au.com.outware.neanderthal.data.model.Variant
-import au.com.outware.neanderthal.data.repository.VariantRepository
 import au.com.outware.neanderthal.util.CharSequenceDeserializer
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import org.jetbrains.anko.defaultSharedPreferences
 import java.util.*
 
 /**
@@ -18,9 +16,9 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
                                          baseVariants: Map<String, Any>,
                                          defaultVariant: String): VariantRepository {
     companion object {
-        const val KEY_PREFIX = "neanderthal_"
-        const val VARIANT_LIST = KEY_PREFIX + "variant_list"
-        const val CURRENT_VARIANT = KEY_PREFIX + "current_variant"
+        const val SHARED_PREFERENCES_FILE_NAME = "_neanderthal_preferences"
+        const val VARIANT_LIST = "variant_list"
+        const val CURRENT_VARIANT = "current_variant"
     }
 
     private val sharedPreferences: SharedPreferences
@@ -28,13 +26,13 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
     private val gson: Gson = GsonBuilder().registerTypeAdapter(CharSequence::class.java, CharSequenceDeserializer()).create()
 
     init {
-        sharedPreferences = context.defaultSharedPreferences
+        sharedPreferences = context.getSharedPreferences("${context.packageName}$SHARED_PREFERENCES_FILE_NAME", Context.MODE_PRIVATE)
         editor = sharedPreferences.edit()
 
         if (!sharedPreferences.contains(VARIANT_LIST)) {
             editor.putStringSet(VARIANT_LIST, baseVariants.keys)
             for(variant in baseVariants) {
-                editor.putString(KEY_PREFIX + variant.key, gson.toJson(variant.value))
+                editor.putString(variant.key, gson.toJson(variant.value))
             }
             editor.putString(CURRENT_VARIANT, defaultVariant)
             editor.apply()
@@ -48,7 +46,7 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
             editor.putStringSet(VARIANT_LIST, variantList)
         }
 
-        editor.putString(KEY_PREFIX + variant.name, gson.toJson(variant.configuration))
+        editor.putString(variant.name, gson.toJson(variant.configuration))
         editor.apply()
     }
 
@@ -57,7 +55,7 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
         variantList.remove(name)
         editor.putStringSet(VARIANT_LIST, variantList)
 
-        editor.remove(KEY_PREFIX + name)
+        editor.remove(name)
         editor.apply()
     }
 
@@ -66,15 +64,15 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
         val variants = ArrayList<Variant>(variantNames.size)
 
         for(name in variantNames) {
-            variants.add(Variant(name, gson.fromJson(sharedPreferences.getString(KEY_PREFIX + name, null), klass)))
+            variants.add(Variant(name, gson.fromJson(sharedPreferences.getString(name, null), klass)))
         }
 
         return variants
     }
 
     override fun getVariant(name: String): Variant? {
-        if(sharedPreferences.contains(KEY_PREFIX + name)) {
-            return Variant(name, gson.fromJson(sharedPreferences.getString(KEY_PREFIX + name, null), klass))
+        if(sharedPreferences.contains(name)) {
+            return Variant(name, gson.fromJson(sharedPreferences.getString(name, null), klass))
         } else {
             return null
         }
@@ -91,8 +89,8 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
 
         val name = sharedPreferences.getString(CURRENT_VARIANT, null);
 
-        if(sharedPreferences.contains(KEY_PREFIX + name)) {
-            return Variant(name, gson.fromJson(sharedPreferences.getString(KEY_PREFIX + name, null), klass))
+        if(sharedPreferences.contains(name)) {
+            return Variant(name, gson.fromJson(sharedPreferences.getString(name, null), klass))
         } else {
             return null
         }

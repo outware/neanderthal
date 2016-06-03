@@ -1,6 +1,7 @@
 package au.com.outware.neanderthal.presentation.view.activity
 
 import android.os.Bundle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
@@ -15,8 +16,6 @@ import au.com.outware.neanderthal.util.extensions.finishWithResult
 import au.com.outware.neanderthal.util.extensions.inflateMenu
 import kotlinx.android.synthetic.main.neanderthal_activity_edit_variant.*
 import kotlinx.android.synthetic.main.neanderthal_item_variant_name.view.*
-import org.jetbrains.anko.AlertDialogBuilder
-import org.jetbrains.anko.alert
 import javax.inject.Inject
 
 /**
@@ -26,7 +25,7 @@ class EditVariantActivity : AppCompatActivity(), EditVariantPresenter.ViewSurfac
     @Inject
     lateinit internal var presenter: EditVariantPresenter
 
-    private var dialog: AlertDialogBuilder? = null
+    private var dialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,10 +84,12 @@ class EditVariantActivity : AppCompatActivity(), EditVariantPresenter.ViewSurfac
     }
 
     override fun createCancelConfirmation() {
-        dialog = alert(R.string.neanderthal_cancel_message, R.string.neanderthal_cancel_title) {
-            positiveButton(R.string.neanderthal_cancel_positive) { presenter.onCancelConfirmation(true) }
-            negativeButton(R.string.neanderthal_cancel) { presenter.onCancelConfirmation(false) }
-        }.show()
+        dialog = AlertDialog.Builder(this)
+                .setTitle(R.string.neanderthal_cancel_title)
+                .setMessage(R.string.neanderthal_cancel_message)
+                .setPositiveButton(R.string.neanderthal_cancel_positive) { dialog, which -> presenter.onCancelConfirmation(true) }
+                .setNegativeButton(R.string.neanderthal_cancel) { dialog, which -> presenter.onCancelConfirmation(false) }
+                .show()
     }
 
     override fun dismissCancelConfirmation() {

@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
 import android.support.annotation.MenuRes
-import android.support.v7.app.AppCompatActivity
 import android.view.Menu
+import kotlin.reflect.KClass
 
 /**
  * @author timmutton
@@ -29,4 +29,18 @@ fun Activity.finishWithResult(resultCode: Int, vararg extras: Pair<String, Any>)
     }
 
     finish()
+}
+
+fun Activity.navigate(klass: KClass<out Activity>, vararg extras: Pair<String, Any>) {
+    val intent = Intent(this, klass.java)
+    extras.forEach { extra -> intent.putExtra(extra) }
+    startActivity(intent)
+}
+
+
+fun Activity.navigateForResult(klass: KClass<out Activity>, requestCode: Int,
+                               vararg extras: Pair<String, Any>) {
+    val intent = Intent(this, klass.java)
+    extras.forEach { extra -> intent.putExtra(extra) }
+    startActivityForResult(intent, requestCode)
 }
