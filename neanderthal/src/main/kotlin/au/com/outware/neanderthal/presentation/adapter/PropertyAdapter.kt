@@ -41,7 +41,7 @@ class PropertyAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
         this.variant = variant
 
         val fields = variant.configuration!!.javaClass.declaredFields.filter {
-            field -> !Modifier.isPrivate(field.modifiers)
+            field -> !Modifier.isPrivate(field.modifiers) && !Modifier.isTransient(field.modifiers)
         }
         properties.addAll(fields)
         for(property in properties) {
