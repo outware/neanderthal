@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import au.com.outware.neanderthal.application.NeanderthalApplication;
-import au.com.outware.neanderthal.util.CharSequenceDeserializer;
 
 /**
  * @author timmutton
