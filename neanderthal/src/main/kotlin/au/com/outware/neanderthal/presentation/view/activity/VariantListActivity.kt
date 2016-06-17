@@ -1,7 +1,9 @@
 package au.com.outware.neanderthal.presentation.view.activity
 
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -46,6 +48,7 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         variantList.adapter = adapter
 
         buttonAdd.setOnClickListener { view -> presenter.onAddClicked() }
+        buttonLaunch.setOnClickListener { view -> presenter.onLaunchClicked() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?) = inflateMenu(R.menu.neanderthal_menu_variant_list, menu)
@@ -83,6 +86,21 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
 
     override fun goToEditVariant(name: String) {
         navigate(EditVariantActivity::class, EditVariantPresenter.ViewSurface.EXTRA_NAME to name)
+    }
+
+    override fun goToMainApplication() {
+        val resolvedInfos = packageManager.queryIntentActivities(Intent(Intent.ACTION_MAIN), PackageManager.GET_RESOLVED_FILTER)
+        for(info in resolvedInfos) {
+            val activityInfo = info.activityInfo
+            val applicationName = activityInfo.applicationInfo.className
+
+            if(applicationName != null && applicationName.equals(application.javaClass.name) &&
+                    activityInfo.name != localClassName) {
+                val intent = Intent();
+                intent.component = ComponentName(this, activityInfo.name);
+                startActivity(intent);
+            }
+        }
     }
 
     override fun createDeleteConfirmation() {

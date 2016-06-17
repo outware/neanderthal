@@ -112,12 +112,17 @@ class VariantListPresenter @Inject constructor(): Presenter {
         }
     }
 
+    fun onLaunchClicked() {
+        view.goToMainApplication()
+    }
+
     interface ViewSurface {
         fun createDeleteConfirmation()
         fun dismissDeleteConfirmation()
+        fun notifyDeleted()
         fun goToAddVariant()
         fun goToEditVariant(name: String)
-        fun notifyDeleted()
+        fun goToMainApplication()
     }
 
     interface AdapterSurface {

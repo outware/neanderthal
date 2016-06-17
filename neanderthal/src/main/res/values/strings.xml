@@ -22,4 +22,5 @@
     <string name="neanderthal_title_add_variant">Add Variant</string>
     <string name="neanderthal_name_required">Required</string>
     <string name="neanderthal_done">Done</string>
+    <string name="neanderthal_launch_button">Launch Application</string>
 </resources>
