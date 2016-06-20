@@ -31,28 +31,24 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
         sharedPreferences = context.getSharedPreferences("${context.packageName}$SHARED_PREFERENCES_FILE_NAME", Context.MODE_PRIVATE)
         editor = sharedPreferences.edit()
 
-        val structure = klass.declaredFields.filter {
-            field -> !Modifier.isPrivate(field.modifiers) && !Modifier.isTransient(field.modifiers)
-        }.map {
-            field -> field.name
-        }.toHashSet()
+        val structure = klass.declaredFields
+                .filter { field -> !Modifier.isPrivate(field.modifiers) && !Modifier.isTransient(field.modifiers) }
+                .map { field -> field.name }
+                .toHashSet()
+
+        if(!sharedPreferences.getStringSet(VARIANT_STRUCTURE, structure).equals(structure)) {
+            editor.clear()
+        }
 
         if (!sharedPreferences.contains(VARIANT_LIST)) {
-            initialiseRepository(baseVariants, defaultVariant, structure)
-        } else if(!sharedPreferences.getStringSet(VARIANT_STRUCTURE, structure).equals(structure)) {
-            editor.clear()
-            initialiseRepository(baseVariants, defaultVariant, structure)
+            editor.putStringSet(VARIANT_LIST, baseVariants.keys)
+            for (variant in baseVariants) {
+                editor.putString(variant.key, gson.toJson(variant.value))
+            }
+            editor.putStringSet(VARIANT_STRUCTURE, structure)
+            editor.putString(CURRENT_VARIANT, defaultVariant)
+            editor.apply()
         }
-    }
-
-    private fun initialiseRepository(baseVariants: Map<String, Any>, defaultVariant: String, structure: HashSet<String>) {
-        editor.putStringSet(VARIANT_LIST, baseVariants.keys)
-        for (variant in baseVariants) {
-            editor.putString(variant.key, gson.toJson(variant.value))
-        }
-        editor.putStringSet(VARIANT_STRUCTURE, structure)
-        editor.putString(CURRENT_VARIANT, defaultVariant)
-        editor.apply()
     }
 
     override fun addVariant(variant: Variant) {
