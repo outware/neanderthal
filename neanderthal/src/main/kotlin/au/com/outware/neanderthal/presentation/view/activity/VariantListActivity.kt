@@ -89,18 +89,28 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
     }
 
     override fun goToMainApplication() {
-        val resolvedInfos = packageManager.queryIntentActivities(Intent(Intent.ACTION_MAIN), PackageManager.GET_RESOLVED_FILTER)
-        for(info in resolvedInfos) {
-            val activityInfo = info.activityInfo
-            val applicationName = activityInfo.applicationInfo.className
+        val defaultLaunchIntent = packageManager.getLaunchIntentForPackage(packageName)
 
-            if(applicationName != null && applicationName.equals(application.javaClass.name) &&
-                    activityInfo.name != localClassName) {
-                val intent = Intent();
-                intent.component = ComponentName(this, activityInfo.name);
-                startActivity(intent);
-            }
+        // If neanderthal is not the default launch intent
+        if(!defaultLaunchIntent.component.className.equals(localClassName)) {
+            startActivity(defaultLaunchIntent)
+        } else {
+            // Filter for main intents for this package
+            val filterIntent = Intent(Intent.ACTION_MAIN)
+            filterIntent.setPackage(packageName)
+
+            // Get the first that isnt the current class
+            val launchActivity = packageManager.queryIntentActivities(filterIntent, PackageManager.GET_RESOLVED_FILTER)
+                    .filter { info -> !info.activityInfo.name.equals(localClassName) }
+                    .map { info -> info.activityInfo }
+                    .first()
+
+            // Launch the activity
+            val intent = Intent()
+            intent.component = ComponentName(this, launchActivity.name)
+            startActivity(intent)
         }
+
     }
 
     override fun createDeleteConfirmation() {
