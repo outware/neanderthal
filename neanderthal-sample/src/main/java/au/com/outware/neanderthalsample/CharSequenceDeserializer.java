@@ -14,7 +14,7 @@ public class CharSequenceDeserializer implements JsonDeserializer<CharSequence> 
     @Override
     public CharSequence deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         if(json != null) {
-            return json.toString();
+            return json.getAsString();
         }
         return null;
     }
