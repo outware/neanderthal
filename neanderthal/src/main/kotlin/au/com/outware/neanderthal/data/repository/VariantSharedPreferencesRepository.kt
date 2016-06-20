@@ -6,6 +6,7 @@ import au.com.outware.neanderthal.data.model.Variant
 import au.com.outware.neanderthal.util.CharSequenceDeserializer
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import java.lang.reflect.Modifier
 import java.util.*
 
 /**
@@ -19,6 +20,7 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
         const val SHARED_PREFERENCES_FILE_NAME = "_neanderthal_preferences"
         const val VARIANT_LIST = "variant_list"
         const val CURRENT_VARIANT = "current_variant"
+        const val VARIANT_STRUCTURE = "variant_structure"
     }
 
     private val sharedPreferences: SharedPreferences
@@ -29,19 +31,32 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
         sharedPreferences = context.getSharedPreferences("${context.packageName}$SHARED_PREFERENCES_FILE_NAME", Context.MODE_PRIVATE)
         editor = sharedPreferences.edit()
 
+        val structure = klass.declaredFields.filter {
+            field -> !Modifier.isPrivate(field.modifiers) && !Modifier.isTransient(field.modifiers)
+        }.map {
+            field -> field.name
+        }.toHashSet()
+
         if (!sharedPreferences.contains(VARIANT_LIST)) {
-            editor.putStringSet(VARIANT_LIST, baseVariants.keys)
-            for(variant in baseVariants) {
-                editor.putString(variant.key, gson.toJson(variant.value))
-            }
-            editor.putString(CURRENT_VARIANT, defaultVariant)
-            editor.apply()
+            initialiseRepository(baseVariants, defaultVariant, structure)
+        } else if(!sharedPreferences.getStringSet(VARIANT_STRUCTURE, structure).equals(structure)) {
+            editor.clear()
+            initialiseRepository(baseVariants, defaultVariant, structure)
         }
+    }
+
+    private fun initialiseRepository(baseVariants: Map<String, Any>, defaultVariant: String, structure: HashSet<String>) {
+        editor.putStringSet(VARIANT_LIST, baseVariants.keys)
+        for (variant in baseVariants) {
+            editor.putString(variant.key, gson.toJson(variant.value))
+        }
+        editor.putStringSet(VARIANT_STRUCTURE, structure)
+        editor.putString(CURRENT_VARIANT, defaultVariant)
+        editor.apply()
     }
 
     override fun addVariant(variant: Variant) {
         val variantList = sharedPreferences.getStringSet(VARIANT_LIST, null)
-        // TODO: confirm this returns true if unique, false otherwise
         if(!variantList.add(variant.name)) {
             editor.putStringSet(VARIANT_LIST, variantList)
         }
