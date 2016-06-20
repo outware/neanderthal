@@ -1,7 +1,9 @@
 package au.com.outware.neanderthal.presentation.view.activity
 
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
@@ -52,8 +54,9 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.menu_item_edit -> presenter.onEditClicked()
-            R.id.menu_item_delete -> presenter.onDeleteClicked()
+            R.id.neanderthal_menu_item_edit -> presenter.onEditClicked()
+            R.id.neanderthal_menu_item_delete -> presenter.onDeleteClicked()
+            R.id.neanderthal_menu_item_launch_application -> presenter.onLaunchClicked()
         }
 
         return super.onOptionsItemSelected(item)
@@ -83,6 +86,31 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
 
     override fun goToEditVariant(name: String) {
         navigate(EditVariantActivity::class, EditVariantPresenter.ViewSurface.EXTRA_NAME to name)
+    }
+
+    override fun goToMainApplication() {
+        val defaultLaunchIntent = packageManager.getLaunchIntentForPackage(packageName)
+
+        // If neanderthal is not the default launch intent
+        if(!defaultLaunchIntent.component.className.equals(localClassName)) {
+            startActivity(defaultLaunchIntent)
+        } else {
+            // Filter for main intents for this package
+            val filterIntent = Intent(Intent.ACTION_MAIN)
+            filterIntent.setPackage(packageName)
+
+            // Get the first that isnt the current class
+            val launchActivity = packageManager.queryIntentActivities(filterIntent, PackageManager.GET_RESOLVED_FILTER)
+                    .filter { info -> !info.activityInfo.name.equals(localClassName) }
+                    .map { info -> info.activityInfo }
+                    .first()
+
+            // Launch the activity
+            val intent = Intent()
+            intent.component = ComponentName(this, launchActivity.name)
+            startActivity(intent)
+        }
+
     }
 
     override fun createDeleteConfirmation() {

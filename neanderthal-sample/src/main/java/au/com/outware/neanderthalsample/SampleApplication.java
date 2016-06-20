@@ -37,6 +37,7 @@ public class SampleApplication extends NeanderthalApplication {
         } catch (IOException e) {
             Log.e(this.getClass().getSimpleName(), e.getMessage(), e);
         }
+
 //        initialiseByHand();
     }
 

@@ -5,6 +5,7 @@
     <string name="neanderthal_add_new">Add</string>
     <string name="neanderthal_edit">Edit</string>
     <string name="neanderthal_delete">Delete</string>
+    <string name="neanderthal_launch_application">Launch Application</string>
     <string name="neanderthal_save">Save</string>
     <string name="neanderthal_cancel">Cancel</string>
     <string name="neanderthal_delete_title">Delete Variant</string>
