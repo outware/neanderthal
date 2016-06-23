@@ -39,6 +39,7 @@ ext {
     gitUrl = 'https://github.com/outware/neanderthal.git'
 
     libraryVersion = '1.2.0'
+    libraryVersion = "${libraryVersion}"
 
     developerId = 'outware'
     developerName = 'Outware Mobile'
@@ -59,6 +60,7 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.2.0"
+        versionName "${libraryVersion}"
     }
 
     buildTypes {
