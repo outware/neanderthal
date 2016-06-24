@@ -2,6 +2,7 @@ package au.com.outware.neanderthal.presentation.presenter
 
 import android.os.Bundle
 import au.com.outware.neanderthal.data.model.Variant
+import au.com.outware.neanderthal.data.repository.VariantSharedPreferencesRepository
 import au.com.outware.neanderthal.domain.interactor.VariantInteractor
 import java.util.*
 import javax.inject.Inject
@@ -81,6 +82,26 @@ class VariantListPresenter @Inject constructor(): Presenter {
         adapter.add(name)
     }
 
+    fun onResetToDefaultClicked(){
+        view.createResetConfirmation()
+    }
+
+    fun onResetConfirmation(confirmed: Boolean){
+        if(confirmed) {
+            val variants : List<String> = variantInteractor.getVariantNames()
+            for(variant : String in variants){
+                var currentVariant = variantInteractor.getVariant(variant)
+                var defaultVariant = variantInteractor.getVariant(variant + VariantSharedPreferencesRepository.VARIANT_DEFAULT)
+                currentVariant.configuration = defaultVariant.configuration
+                variantInteractor.createOrUpdateVariant(currentVariant)
+            }
+
+            view.notifyReset()
+        }
+
+        view.dismissResetConfirmation()
+    }
+
     fun onDeleteConfirmation(confirmed: Boolean) {
         if (confirmed) {
             deletedVariant = variantInteractor.getCurrentVariant()
@@ -120,6 +141,9 @@ class VariantListPresenter @Inject constructor(): Presenter {
         fun createDeleteConfirmation()
         fun dismissDeleteConfirmation()
         fun notifyDeleted()
+        fun createResetConfirmation()
+        fun dismissResetConfirmation()
+        fun notifyReset()
         fun goToAddVariant()
         fun goToEditVariant(name: String)
         fun goToMainApplication()

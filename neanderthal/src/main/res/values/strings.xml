@@ -12,6 +12,10 @@
     <string name="neanderthal_delete_message">Delete selected variant?</string>
     <string name="neanderthal_delete_positive">Delete</string>
     <string name="neanderthal_delete_notice_message">Variant deleted</string>
+    <string name="neanderthal_reset_title">Reset Variants</string>
+    <string name="neanderthal_reset_message">Reset all variants to default values?</string>
+    <string name="neanderthal_reset_positive">Reset</string>
+    <string name="neanderthal_reset_notice_message">Variants reset</string>
     <string name="neanderthal_delete_notice_action">Undo</string>
     <string name="neanderthal_cancel_title">Cancel Changes</string>
     <string name="neanderthal_cancel_message">Are you sure you want to go back? Any changes will be lost</string>
@@ -23,4 +27,5 @@
     <string name="neanderthal_title_add_variant">Add Variant</string>
     <string name="neanderthal_name_required">Required</string>
     <string name="neanderthal_done">Done</string>
+    <string name="neanderthal_reset_default_values">Reset to default</string>
 </resources>

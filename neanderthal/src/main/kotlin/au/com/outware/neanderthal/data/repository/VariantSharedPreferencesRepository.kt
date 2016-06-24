@@ -20,6 +20,7 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
         const val SHARED_PREFERENCES_FILE_NAME = "_neanderthal_preferences"
         const val VARIANT_LIST = "variant_list"
         const val CURRENT_VARIANT = "current_variant"
+        const val VARIANT_DEFAULT = "_default"
         const val VARIANT_STRUCTURE = "variant_structure"
     }
 
@@ -44,6 +45,7 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
             editor.putStringSet(VARIANT_LIST, baseVariants.keys)
             for (variant in baseVariants) {
                 editor.putString(variant.key, gson.toJson(variant.value))
+                editor.putString(variant.key + VARIANT_DEFAULT, gson.toJson(variant.value))
             }
             editor.putStringSet(VARIANT_STRUCTURE, structure)
             editor.putString(CURRENT_VARIANT, defaultVariant)

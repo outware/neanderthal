@@ -48,6 +48,8 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         variantList.adapter = adapter
 
         buttonAdd.setOnClickListener { view -> presenter.onAddClicked() }
+
+        reset_to_default_button.setOnClickListener{ presenter.onResetToDefaultClicked() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?) = inflateMenu(R.menu.neanderthal_menu_variant_list, menu)
@@ -127,11 +129,29 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         this.dialog = null
     }
 
+    override fun createResetConfirmation() {
+        dialog = AlertDialog.Builder(this)
+                .setTitle(R.string.neanderthal_reset_title)
+                .setMessage(R.string.neanderthal_reset_message)
+                .setPositiveButton(R.string.neanderthal_reset_positive) { dialog, which -> presenter.onResetConfirmation(true) }
+                .setNegativeButton(R.string.neanderthal_cancel) { dialog, which -> presenter.onResetConfirmation(false) }
+                .show()
+    }
+
+    override fun dismissResetConfirmation() {
+        dialog?.dismiss()
+        this.dialog = null
+    }
+
     override fun notifyDeleted() {
         layoutRoot.snackbar(R.string.neanderthal_delete_notice_message) {
             action(R.string.neanderthal_delete_notice_action) {
                 presenter.onUndoClicked()
             }
         }
+    }
+
+    override fun notifyReset() {
+        layoutRoot.snackbar(R.string.neanderthal_reset_notice_message)
     }
 }
