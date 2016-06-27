@@ -3,74 +3,52 @@ package au.com.outware.neanderthal.presentation.adapter
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import au.com.outware.neanderthal.data.model.Variant
+import au.com.outware.neanderthal.internal.ConfigManager
 import au.com.outware.neanderthal.presentation.adapter.delegate.*
+import au.com.outware.neanderthal.presentation.adapter.listener.ConfigurationDataListener
 import au.com.outware.neanderthal.presentation.presenter.EditVariantPresenter
-import com.google.gson.annotations.SerializedName
-import java.lang.reflect.Field
-import java.lang.reflect.Modifier
 import java.util.*
 
 /**
  * @author Tim Mutton
  */
-class PropertyAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
-        EditVariantPresenter.AdapterSurface {
+class PropertyAdapter(val configManager: ConfigManager<Any>) : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
+        EditVariantPresenter.AdapterSurface, ConfigurationDataListener {
     companion object {
         private val VIEW_TYPE_VARIANT_NAME = 0
         private val VIEW_TYPE_CHARACTER_SEQUENCE = 1
         private val VIEW_TYPE_BOOLEAN = 2
         private val VIEW_TYPE_NUMBER = 3
-
-        fun getPropertyName(configurationProperty: Field): String {
-            val name: String
-            if (configurationProperty.isAnnotationPresent(SerializedName::class.java)) {
-                name = configurationProperty.getAnnotation(SerializedName::class.java).value
-            } else {
-                name = configurationProperty.name
-            }
-            return name
-        }
     }
-
+    private var propertyList: List<String> = ArrayList()
     private var variant: Variant? = null
-    private val properties: ArrayList<Field> = ArrayList()
-    private val delegates = HashSet<AdapterDelegate<Field>>()
+    private val delegates = HashSet<AdapterDelegate>()
     private var setVariantName:Boolean = false
 
     override fun setItem(variant: Variant) {
         this.variant = variant
-
-        val fields = variant.configuration!!.javaClass.declaredFields.filter {
-            field -> !Modifier.isPrivate(field.modifiers) && !Modifier.isTransient(field.modifiers)
-        }
-        properties.addAll(fields)
-        for(property in properties) {
-            property.isAccessible = true
-        }
-
+        propertyList = configManager.properties
         setVariantName = (variant.name == null)
 
-        delegates.add(NamePropertyAdapterDelegate(variant, setVariantName, VIEW_TYPE_VARIANT_NAME))
-        delegates.add(CharacterSequencePropertyAdapterDelegate(variant, setVariantName, VIEW_TYPE_CHARACTER_SEQUENCE))
-        delegates.add(BooleanSequencePropertyAdapterDelegate(variant, setVariantName, VIEW_TYPE_BOOLEAN))
-        delegates.add(NumericPropertyAdapterDelegate(variant, setVariantName, VIEW_TYPE_NUMBER))
+        delegates.add(NamePropertyAdapterDelegate(variant, VIEW_TYPE_VARIANT_NAME))
+        delegates.add(CharacterSequencePropertyAdapterDelegate(variant, VIEW_TYPE_CHARACTER_SEQUENCE))
+        delegates.add(BooleanSequencePropertyAdapterDelegate(variant, VIEW_TYPE_BOOLEAN))
+        delegates.add(NumericPropertyAdapterDelegate(variant, VIEW_TYPE_NUMBER))
     }
 
     override fun getItemViewType(position: Int): Int {
-        var viewType = -1
-
-        for(delegate in delegates) {
-            if(delegate.isForViewType(properties, position)) {
-                viewType = delegate.viewType
-                break
-            }
+        if(setVariantName && position == 0) {
+            return VIEW_TYPE_VARIANT_NAME
         }
 
-        if(viewType == -1) {
-            throw IllegalArgumentException("Unsupported property type")
+        val viewType = configManager.propertyTypes[propertyList[position]]
+        if(viewType!!.equals(CharSequence::class.java) || viewType.equals(String::class.java)) {
+            return VIEW_TYPE_CHARACTER_SEQUENCE
         }
-
-        return viewType
+        if(viewType.equals(Boolean::class.java)) {
+            return VIEW_TYPE_BOOLEAN
+        }
+        return VIEW_TYPE_NUMBER
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -94,13 +72,21 @@ class PropertyAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
         val viewType = holder.itemViewType
         for(delegate in delegates) {
             if(delegate.viewType == viewType) {
-                delegate.bindViewHolder(properties, position, holder)
+                val propertyName = propertyList[position - if (setVariantName) 1 else 0]
+                val displayName = configManager.getPropertyDisplayName(variant!!.configuration, propertyName);
+                val value = configManager.getPropertyValue(variant!!.configuration, propertyName)
+                val type = configManager.getPropertyType(variant!!.configuration, propertyName)
+                delegate.bindViewHolder(displayName, value, type as Class<Any>, holder, this)
                 break
             }
         }
     }
 
+    override fun onDataChanged(configuration: Any?, name: String, value: Any) {
+        configManager.saveConfiguration(configuration, name, value);
+    }
+
     override fun getItemCount(): Int {
-        return properties.size + if (setVariantName) 1 else 0
+        return propertyList.size + if (setVariantName) 1 else 0
     }
 }

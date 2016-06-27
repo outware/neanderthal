@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import au.com.outware.neanderthal.Neanderthal
 import au.com.outware.neanderthal.R
 import au.com.outware.neanderthal.application.NeanderthalApplication
 import au.com.outware.neanderthal.dagger.component.DaggerEditVariantComponent
@@ -31,7 +32,7 @@ class EditVariantActivity : AppCompatActivity(), EditVariantPresenter.ViewSurfac
         super.onCreate(savedInstanceState)
         setContentView(R.layout.neanderthal_activity_edit_variant)
 
-        val adapter = PropertyAdapter()
+        val adapter = PropertyAdapter(Neanderthal.sConfigManager)
 
         DaggerEditVariantComponent.builder()
             .neanderthalApplicationComponent(NeanderthalApplication.neanderthalApplicationComponent)

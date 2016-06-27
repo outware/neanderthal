@@ -1,1 +1,1 @@
-include ':neanderthal', ':neanderthal-sample', ':neanderthal-no-op'
+include ':neanderthal', ':neanderthal-sample', ':neanderthal-no-op', ':neanderthal-compiler', ':neanderthal-annotation'

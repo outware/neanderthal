@@ -128,6 +128,9 @@ bintray {
 }
 
 dependencies {
+    compile project(':neanderthal-annotation')
+    compile project(':neanderthal-compiler')
+
     compile 'com.google.code.gson:gson:2.4',
             "com.google.dagger:dagger:$daggerVersion",
             // Support

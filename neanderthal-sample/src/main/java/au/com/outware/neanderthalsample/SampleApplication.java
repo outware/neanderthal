@@ -1,7 +1,6 @@
 package au.com.outware.neanderthalsample;
 
 import android.support.v7.app.AppCompatDelegate;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,11 +11,14 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
+import au.com.outware.neanderthal.Neanderthal;
+import au.com.outware.neanderthal.annotation.NeanderthalApp;
 import au.com.outware.neanderthal.application.NeanderthalApplication;
 
 /**
  * @author timmutton
  */
+@NeanderthalApp
 public class SampleApplication extends NeanderthalApplication {
     public static final String PRODUCTION = "Production";
     public static final String STAGING = "Staging";
@@ -33,10 +35,16 @@ public class SampleApplication extends NeanderthalApplication {
         super.onCreate();
 
         try {
-            initialiseFromJson();
+            Neanderthal.setup(this, getAssets().open(VARIANTS_FILE));
         } catch (IOException e) {
-            Log.e(this.getClass().getSimpleName(), e.getMessage(), e);
+            e.printStackTrace();
         }
+
+//        try {
+//            initialiseFromJson();
+//        } catch (IOException e) {
+//            Log.e(this.getClass().getSimpleName(), e.getMessage(), e);
+//        }
 //        initialiseByHand();
     }
 
@@ -45,7 +53,7 @@ public class SampleApplication extends NeanderthalApplication {
         Gson gson = new GsonBuilder().registerTypeAdapter(CharSequence.class, new CharSequenceDeserializer()).create();
         Reader reader = new InputStreamReader(getAssets().open(VARIANTS_FILE));
         BaseVariants baseVariants = gson.fromJson(reader, BaseVariants.class);
-        initialise(Configuration.class, baseVariants.variants, baseVariants.defaultVariant);
+        Neanderthal.setup(this, baseVariants.variants, baseVariants.defaultVariant);
     }
 
     // An example of how you could initialise Neanderthal entirely within code
@@ -57,6 +65,6 @@ public class SampleApplication extends NeanderthalApplication {
         baseVariants.put(PRODUCTION, production);
         baseVariants.put(STAGING, staging);
         baseVariants.put(DEBUG, debug);
-        initialise(Configuration.class, baseVariants, PRODUCTION);
+        Neanderthal.setup(this, baseVariants, PRODUCTION);
     }
 }

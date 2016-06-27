@@ -2,19 +2,19 @@
   "defaultVariant": "Production",
   "variants": {
     "Production": {
-      "Base URL": "api.example.com",
-      "Enable Logging": false,
-      "Timeout": 2000
+      "baseUrl": "api.example.com",
+      "enableLogging": false,
+      "timeout": 2000
     },
     "Staging": {
-      "Base URL": "api-staging.example.com",
-      "Enable Logging": false,
-      "Timeout": 2000
+      "baseUrl": "api-staging.example.com",
+      "enableLogging": false,
+      "timeout": 2000
     },
     "Development": {
-      "Base URL": "api-dev.example.com",
-      "Enable Logging": true,
-      "Timeout": 1000
+      "baseUrl": "api-dev.example.com",
+      "enableLogging": true,
+      "timeout": 1000
     }
   }
 }

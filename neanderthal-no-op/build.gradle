@@ -57,6 +57,11 @@ android {
     }
 }
 
+dependencies {
+    compile project(':neanderthal-annotation')
+    compile 'com.google.code.gson:gson:2.4'
+}
+
 // custom tasks for creating source/javadoc jars
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
