@@ -17,9 +17,9 @@ class BooleanSequencePropertyAdapterDelegate(val variant: Variant,
     override fun createViewHolder(parent: ViewGroup): RecyclerView.ViewHolder =
             SimpleViewHolder(parent.inflateLayout(R.layout.neanderthal_item_detail_checkbox))
 
-    override fun bindViewHolder(name: String, value: Any, type: Class<Any>, holder: RecyclerView.ViewHolder, configurationDataListener: ConfigurationDataListener) = with(holder.itemView) {
+    override fun bindViewHolder(name: String, value: Any?, type: Class<Any>, holder: RecyclerView.ViewHolder, configurationDataListener: ConfigurationDataListener) = with(holder.itemView) {
         checkboxKey.text = name
-        checkboxValue.isChecked = value.equals(true)
+        checkboxValue.isChecked = if(value == null) false else value.equals(true)
         checkboxValue.setOnCheckedChangeListener {
             buttonView, isChecked ->
             configurationDataListener.onDataChanged(variant.configuration, name, checkboxValue.isChecked);

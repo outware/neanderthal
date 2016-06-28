@@ -24,11 +24,11 @@ class NumericPropertyAdapterDelegate(val variant: Variant,
     override fun createViewHolder(parent: ViewGroup): RecyclerView.ViewHolder =
             SimpleViewHolder(parent.inflateLayout(R.layout.neanderthal_item_detail_text))
 
-    override fun bindViewHolder(name: String, value: Any, type: Class<Any>, holder: RecyclerView.ViewHolder, configurationDataListener: ConfigurationDataListener) = with(holder.itemView) {
+    override fun bindViewHolder(name: String, value: Any?, type: Class<Any>, holder: RecyclerView.ViewHolder, configurationDataListener: ConfigurationDataListener) = with(holder.itemView) {
 
         textKey.text = name;
         editValue.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED
-        editValue.setText(DECIMAL_FORMAT.format(value))
+        editValue.setText(if(value == null) "" else DECIMAL_FORMAT.format(value))
         editValue.addTextChangedListener(object : SimpleTextWatcher() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
 

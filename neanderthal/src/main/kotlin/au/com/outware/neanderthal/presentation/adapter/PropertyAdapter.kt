@@ -41,7 +41,7 @@ class PropertyAdapter(val configManager: ConfigManager<Any>) : RecyclerView.Adap
             return VIEW_TYPE_VARIANT_NAME
         }
 
-        val viewType = configManager.propertyTypes[propertyList[position]]
+        val viewType = configManager.propertyTypes[propertyList[position - if (setVariantName) 1 else 0]]
         if(viewType!!.equals(CharSequence::class.java) || viewType.equals(String::class.java)) {
             return VIEW_TYPE_CHARACTER_SEQUENCE
         }
@@ -72,11 +72,15 @@ class PropertyAdapter(val configManager: ConfigManager<Any>) : RecyclerView.Adap
         val viewType = holder.itemViewType
         for(delegate in delegates) {
             if(delegate.viewType == viewType) {
-                val propertyName = propertyList[position - if (setVariantName) 1 else 0]
-                val displayName = configManager.getPropertyDisplayName(variant!!.configuration, propertyName);
-                val value = configManager.getPropertyValue(variant!!.configuration, propertyName)
-                val type = configManager.getPropertyType(variant!!.configuration, propertyName)
-                delegate.bindViewHolder(displayName, value, type as Class<Any>, holder, this)
+                if(position == 0 && setVariantName) {
+                    delegate.bindViewHolder("", null, Any::class.java, holder, this)
+                } else {
+                    val propertyName = propertyList[position - if (setVariantName) 1 else 0]
+                    val displayName = configManager.getPropertyDisplayName(variant!!.configuration, propertyName);
+                    val value = configManager.getPropertyValue(variant!!.configuration, propertyName)
+                    val type = configManager.getPropertyType(variant!!.configuration, propertyName)
+                    delegate.bindViewHolder(displayName, value, type as Class<Any>, holder, this)
+                }
                 break
             }
         }

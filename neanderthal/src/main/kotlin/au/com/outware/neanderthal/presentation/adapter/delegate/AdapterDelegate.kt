@@ -10,5 +10,5 @@ import au.com.outware.neanderthal.presentation.adapter.listener.ConfigurationDat
 interface AdapterDelegate {
     val viewType: Int
     fun createViewHolder(parent: ViewGroup): RecyclerView.ViewHolder
-    fun bindViewHolder(name: String, value: Any, type: Class<Any>, holder: RecyclerView.ViewHolder, configurationDataListener: ConfigurationDataListener)
+    fun bindViewHolder(name: String, value: Any?, type: Class<Any>, holder: RecyclerView.ViewHolder, configurationDataListener: ConfigurationDataListener)
 }
