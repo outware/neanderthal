@@ -47,4 +47,8 @@ class VariantUseCases(val variantRepository: VariantRepository, var configuratio
     override fun setCurrentVariant(name: String) {
         variantRepository.setCurrentVariant(name)
     }
+
+    override fun resetVariants() {
+        variantRepository.resetVariants()
+    }
 }

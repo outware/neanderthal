@@ -10,8 +10,11 @@ interface VariantRepository {
     fun removeVariant(name: String)
 
     fun getVariants(): List<Variant>
+    fun getDefaultVariants(): List<Variant>
     fun getVariant(name: String): Variant?
 
     fun setCurrentVariant(name: String)
     fun getCurrentVariant(): Variant?
+
+    fun resetVariants()
 }

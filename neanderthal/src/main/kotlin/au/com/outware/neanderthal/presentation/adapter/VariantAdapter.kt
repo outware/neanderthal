@@ -41,6 +41,7 @@ class VariantAdapter(var clickListener: (String, Int) -> Unit) :
     }
 
     override fun add(variants: List<String>) {
+        this.variants.removeAll(this.variants)
         this.variants.addAll(variants)
         notifyDataSetChanged()
     }

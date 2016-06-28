@@ -48,8 +48,6 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         variantList.adapter = adapter
 
         buttonAdd.setOnClickListener { view -> presenter.onAddClicked() }
-
-        reset_to_default_button.setOnClickListener{ presenter.onResetToDefaultClicked() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?) = inflateMenu(R.menu.neanderthal_menu_variant_list, menu)
@@ -59,6 +57,7 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
             R.id.neanderthal_menu_item_edit -> presenter.onEditClicked()
             R.id.neanderthal_menu_item_delete -> presenter.onDeleteClicked()
             R.id.neanderthal_menu_item_launch_application -> presenter.onLaunchClicked()
+            R.id.neanderthal_menu_item_reset -> presenter.onResetToDefaultClicked()
         }
 
         return super.onOptionsItemSelected(item)

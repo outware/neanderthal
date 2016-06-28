@@ -2,7 +2,6 @@ package au.com.outware.neanderthal.presentation.presenter
 
 import android.os.Bundle
 import au.com.outware.neanderthal.data.model.Variant
-import au.com.outware.neanderthal.data.repository.VariantSharedPreferencesRepository
 import au.com.outware.neanderthal.domain.interactor.VariantInteractor
 import java.util.*
 import javax.inject.Inject
@@ -37,21 +36,29 @@ class VariantListPresenter @Inject constructor(): Presenter {
             currentPosition = parameters.getInt(CURRENT_POSITION_KEY)
             currentVariantName = parameters.getString(CURRENT_VARIANT_NAME_KEY)
             variants = parameters.getStringArrayList(VARIANTS_KEY)
-            adapter.setCurrentPosition(currentPosition)
+            if(variants.size > 0) {
+                variants.sort()
+                adapter.setCurrentPosition(currentPosition)
+            }
         } else {
             variants = ArrayList<String>(variantInteractor.getVariantNames())
-            currentVariantName = variantInteractor.getCurrentVariant()?.name ?: variants.first()
-            currentPosition = variants.indexOf(currentVariantName)
-            adapter.setCurrentPosition(variants.indexOf(currentVariantName))
+            if(variants.size > 0) {
+                currentVariantName = variantInteractor.getCurrentVariant()?.name ?: variants.first()
+                currentPosition = variants.indexOf(currentVariantName)
+                variants.sort()
+                adapter.setCurrentPosition(variants.indexOf(currentVariantName))
+            }
         }
 
         adapter.add(variants)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt(CURRENT_POSITION_KEY, currentPosition)
-        outState.putString(CURRENT_VARIANT_NAME_KEY, currentVariantName)
-        outState.putStringArrayList(VARIANTS_KEY, variants)
+        if(variants.size > 0) {
+            outState.putInt(CURRENT_POSITION_KEY, currentPosition)
+            outState.putString(CURRENT_VARIANT_NAME_KEY, currentVariantName)
+            outState.putStringArrayList(VARIANTS_KEY, variants)
+        }
     }
 
     override fun onPause() {
@@ -70,16 +77,22 @@ class VariantListPresenter @Inject constructor(): Presenter {
     }
 
     fun onEditClicked() {
-        view.goToEditVariant(currentVariantName)
+        if(variants.size > 0) {
+            view.goToEditVariant(currentVariantName)
+        }
     }
 
     fun onDeleteClicked() {
-        view.createDeleteConfirmation()
+        if(variants.size > 0) {
+            view.createDeleteConfirmation()
+        }
     }
 
     fun onAddVariant(name: String) {
         currentVariantName = name
-        adapter.add(name)
+        variants.add(name)
+        variants.sort()
+        adapter.add(variants)
     }
 
     fun onResetToDefaultClicked(){
@@ -88,14 +101,19 @@ class VariantListPresenter @Inject constructor(): Presenter {
 
     fun onResetConfirmation(confirmed: Boolean){
         if(confirmed) {
-            val variants : List<String> = variantInteractor.getVariantNames()
-            for(variant : String in variants){
-                var currentVariant = variantInteractor.getVariant(variant)
-                var defaultVariant = variantInteractor.getVariant(variant + VariantSharedPreferencesRepository.VARIANT_DEFAULT)
-                currentVariant.configuration = defaultVariant.configuration
-                variantInteractor.createOrUpdateVariant(currentVariant)
+            variantInteractor.resetVariants()
+            variants.clear()
+
+            val currentVariants : List<String> = variantInteractor.getVariantNames()
+            for(variant in currentVariants){
+                variants.add(variant)
             }
 
+            variants.sort()
+            adapter.add(variants)
+            currentPosition = 0
+            currentVariantName = variants[0]
+            adapter.setCurrentPosition(0)
             view.notifyReset()
         }
 
@@ -110,11 +128,13 @@ class VariantListPresenter @Inject constructor(): Presenter {
             variantInteractor.removeVariant(currentVariantName)
             variants.remove(currentVariantName)
 
-            // Set new current variant
-            currentPosition = Math.max(--currentPosition, 0)
-            currentVariantName = variants[currentPosition]
-            variantInteractor.setCurrentVariant(currentVariantName)
-            adapter.setCurrentPosition(currentPosition)
+            if(variants.size > 0) {
+                // Set new current variant
+                currentPosition = Math.max(--currentPosition, 0)
+                currentVariantName = variants[currentPosition]
+                variantInteractor.setCurrentVariant(currentVariantName)
+                adapter.setCurrentPosition(currentPosition)
+            }
 
             // Notify the views
             adapter.remove(oldPosition)

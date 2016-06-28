@@ -18,12 +18,4 @@
         android:layout_margin="@dimen/neanderthal_activity_margin"
         android:src="@drawable/neanderthal_ic_add_white_24dp"
         app:elevation="4dp"/>
-
-    <Button
-        android:id="@+id/reset_to_default_button"
-        android:layout_gravity="center"
-        android:layout_marginBottom="5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/neanderthal_reset_default_values"/>
 </android.support.design.widget.CoordinatorLayout>
