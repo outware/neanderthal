@@ -77,15 +77,11 @@ class VariantListPresenter @Inject constructor(): Presenter {
     }
 
     fun onEditClicked() {
-        if(variants.size > 0) {
-            view.goToEditVariant(currentVariantName)
-        }
+        view.goToEditVariant(currentVariantName)
     }
 
     fun onDeleteClicked() {
-        if(variants.size > 0) {
-            view.createDeleteConfirmation()
-        }
+        view.createDeleteConfirmation()
     }
 
     fun onAddVariant(name: String) {
@@ -93,6 +89,8 @@ class VariantListPresenter @Inject constructor(): Presenter {
         variants.add(name)
         variants.sort()
         adapter.add(variants)
+
+        view.updateOptionsMenu()
     }
 
     fun onResetToDefaultClicked(){
@@ -104,20 +102,18 @@ class VariantListPresenter @Inject constructor(): Presenter {
             variantInteractor.resetVariants()
             variants.clear()
 
-            val currentVariants : List<String> = variantInteractor.getVariantNames()
-            for(variant in currentVariants){
-                variants.add(variant)
-            }
+            variants.addAll(variantInteractor.getVariantNames())
 
             variants.sort()
             adapter.add(variants)
-            currentPosition = 0
-            currentVariantName = variants[0]
-            adapter.setCurrentPosition(0)
+            currentVariantName = variantInteractor.getCurrentVariant()?.name ?: variants.first()
+            currentPosition = variants.indexOf(currentVariantName)
+            adapter.setCurrentPosition(currentPosition)
             view.notifyReset()
         }
 
         view.dismissResetConfirmation()
+        view.updateOptionsMenu()
     }
 
     fun onDeleteConfirmation(confirmed: Boolean) {
@@ -142,6 +138,7 @@ class VariantListPresenter @Inject constructor(): Presenter {
         }
 
         view.dismissDeleteConfirmation()
+        view.updateOptionsMenu()
     }
 
     fun onUndoClicked() {
@@ -157,6 +154,10 @@ class VariantListPresenter @Inject constructor(): Presenter {
         view.goToMainApplication()
     }
 
+    fun getVariantListSize() : Int {
+        return variants.size
+    }
+
     interface ViewSurface {
         fun createDeleteConfirmation()
         fun dismissDeleteConfirmation()
@@ -167,6 +168,7 @@ class VariantListPresenter @Inject constructor(): Presenter {
         fun goToAddVariant()
         fun goToEditVariant(name: String)
         fun goToMainApplication()
+        fun updateOptionsMenu()
     }
 
     interface AdapterSurface {

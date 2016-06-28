@@ -63,6 +63,13 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu!!.findItem(R.id.neanderthal_menu_item_delete).setVisible(presenter.getVariantListSize() != 0)
+        menu!!.findItem(R.id.neanderthal_menu_item_edit).setVisible(presenter.getVariantListSize() != 0)
+
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onPause() {
         super.onPause()
         presenter.onPause()
@@ -152,5 +159,9 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
 
     override fun notifyReset() {
         layoutRoot.snackbar(R.string.neanderthal_reset_notice_message)
+    }
+
+    override fun updateOptionsMenu(){
+        invalidateOptionsMenu()
     }
 }

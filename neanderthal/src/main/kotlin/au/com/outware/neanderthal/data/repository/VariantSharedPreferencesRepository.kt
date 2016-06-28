@@ -21,6 +21,7 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
         const val VARIANT_LIST = "variant_list"
         const val DEFAULT_VARIANT_LIST = "default_variant_list"
         const val CURRENT_VARIANT = "current_variant"
+        const val DEFAULT_VARIANT = "default_variant"
         const val VARIANT_DEFAULT = "_default"
         const val VARIANT_STRUCTURE = "variant_structure"
     }
@@ -56,6 +57,7 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
             }
             editor.putStringSet(VARIANT_STRUCTURE, structure)
             editor.putString(CURRENT_VARIANT, defaultVariant)
+            editor.putString(DEFAULT_VARIANT, defaultVariant)
             editor.apply()
         }
     }
@@ -81,17 +83,6 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
 
     override fun getVariants(): List<Variant> {
         val variantNames = sharedPreferences.getStringSet(VARIANT_LIST, emptySet())
-        val variants = ArrayList<Variant>(variantNames.size)
-
-        for(name in variantNames) {
-            variants.add(Variant(name, gson.fromJson(sharedPreferences.getString(name, null), klass)))
-        }
-
-        return variants
-    }
-
-    override fun getDefaultVariants(): List<Variant> {
-        val variantNames = sharedPreferences.getStringSet(DEFAULT_VARIANT_LIST, emptySet())
         val variants = ArrayList<Variant>(variantNames.size)
 
         for(name in variantNames) {
@@ -128,24 +119,16 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
     }
 
     override fun resetVariants(){
-        val variants : List<Variant> = getVariants()
-        for(variant in variants) {
+        getVariants().forEach { variant ->
             removeVariant(variant.name!!)
         }
 
-        val defaultVariants : List<Variant> = getDefaultVariants()
-        var baseVariantDefaults = ArrayList<String>(defaultVariants.size)
-        for(variant in defaultVariants) {
-            baseVariantDefaults.add(variant.name!!.removeSuffix(VARIANT_DEFAULT))
+        sharedPreferences.getStringSet(DEFAULT_VARIANT_LIST, emptySet()).map { name ->
+            Variant(name.removeSuffix(VARIANT_DEFAULT), gson.fromJson(sharedPreferences.getString(name, null), klass))
+        }.forEach { variant ->
+            addVariant(variant)
         }
 
-        for(variant in defaultVariants){
-            var currentVariant = variant
-            currentVariant.name = baseVariantDefaults[0]
-            baseVariantDefaults.removeAt(0)
-            addVariant(currentVariant)
-        }
-
-        setCurrentVariant(defaultVariants[0].name!!)
+        setCurrentVariant(sharedPreferences.getString(DEFAULT_VARIANT, null))
     }
 }
