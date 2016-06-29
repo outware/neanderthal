@@ -28,6 +28,7 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
 
     private lateinit var adapter: VariantAdapter
     private var dialog: AlertDialog? = null
+    private var allowEditing: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,8 +65,10 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        menu!!.findItem(R.id.neanderthal_menu_item_delete).setVisible(presenter.getVariantListSize() != 0)
-        menu!!.findItem(R.id.neanderthal_menu_item_edit).setVisible(presenter.getVariantListSize() != 0)
+        menu?.let {
+            menu.findItem(R.id.neanderthal_menu_item_delete).setVisible(allowEditing)
+            menu.findItem(R.id.neanderthal_menu_item_edit).setVisible(allowEditing)
+        }
 
         return super.onPrepareOptionsMenu(menu)
     }
@@ -161,7 +164,8 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         layoutRoot.snackbar(R.string.neanderthal_reset_notice_message)
     }
 
-    override fun updateOptionsMenu(){
+    override fun setEditingEnabled(enabled : Boolean){
+        allowEditing = enabled
         invalidateOptionsMenu()
     }
 }

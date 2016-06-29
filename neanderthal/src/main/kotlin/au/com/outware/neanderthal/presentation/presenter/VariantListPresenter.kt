@@ -90,7 +90,7 @@ class VariantListPresenter @Inject constructor(): Presenter {
         variants.sort()
         adapter.add(variants)
 
-        view.updateOptionsMenu()
+        updateEditingEnabled()
     }
 
     fun onResetToDefaultClicked(){
@@ -113,7 +113,7 @@ class VariantListPresenter @Inject constructor(): Presenter {
         }
 
         view.dismissResetConfirmation()
-        view.updateOptionsMenu()
+        updateEditingEnabled()
     }
 
     fun onDeleteConfirmation(confirmed: Boolean) {
@@ -130,6 +130,9 @@ class VariantListPresenter @Inject constructor(): Presenter {
                 currentVariantName = variants[currentPosition]
                 variantInteractor.setCurrentVariant(currentVariantName)
                 adapter.setCurrentPosition(currentPosition)
+            }else{
+                currentPosition = 0
+                currentVariantName = ""
             }
 
             // Notify the views
@@ -138,7 +141,7 @@ class VariantListPresenter @Inject constructor(): Presenter {
         }
 
         view.dismissDeleteConfirmation()
-        view.updateOptionsMenu()
+        updateEditingEnabled()
     }
 
     fun onUndoClicked() {
@@ -154,8 +157,8 @@ class VariantListPresenter @Inject constructor(): Presenter {
         view.goToMainApplication()
     }
 
-    fun getVariantListSize() : Int {
-        return variants.size
+    fun updateEditingEnabled() {
+        view.setEditingEnabled(variants.size != 0)
     }
 
     interface ViewSurface {
@@ -168,7 +171,7 @@ class VariantListPresenter @Inject constructor(): Presenter {
         fun goToAddVariant()
         fun goToEditVariant(name: String)
         fun goToMainApplication()
-        fun updateOptionsMenu()
+        fun setEditingEnabled(enabled : Boolean)
     }
 
     interface AdapterSurface {
