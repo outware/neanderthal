@@ -12,4 +12,5 @@ interface VariantInteractor {
     fun getVariantNames(): List<String>
     fun removeVariant(name: String)
     fun setCurrentVariant(name: String)
+    fun resetVariants()
 }

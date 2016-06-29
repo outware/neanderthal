@@ -36,21 +36,29 @@ class VariantListPresenter @Inject constructor(): Presenter {
             currentPosition = parameters.getInt(CURRENT_POSITION_KEY)
             currentVariantName = parameters.getString(CURRENT_VARIANT_NAME_KEY)
             variants = parameters.getStringArrayList(VARIANTS_KEY)
-            adapter.setCurrentPosition(currentPosition)
+            if(variants.size > 0) {
+                variants.sort()
+                adapter.setCurrentPosition(currentPosition)
+            }
         } else {
             variants = ArrayList<String>(variantInteractor.getVariantNames())
-            currentVariantName = variantInteractor.getCurrentVariant()?.name ?: variants.first()
-            currentPosition = variants.indexOf(currentVariantName)
-            adapter.setCurrentPosition(variants.indexOf(currentVariantName))
+            if(variants.size > 0) {
+                currentVariantName = variantInteractor.getCurrentVariant()?.name ?: variants.first()
+                currentPosition = variants.indexOf(currentVariantName)
+                variants.sort()
+                adapter.setCurrentPosition(variants.indexOf(currentVariantName))
+            }
         }
 
         adapter.add(variants)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        outState.putInt(CURRENT_POSITION_KEY, currentPosition)
-        outState.putString(CURRENT_VARIANT_NAME_KEY, currentVariantName)
-        outState.putStringArrayList(VARIANTS_KEY, variants)
+        if(variants.size > 0) {
+            outState.putInt(CURRENT_POSITION_KEY, currentPosition)
+            outState.putString(CURRENT_VARIANT_NAME_KEY, currentVariantName)
+            outState.putStringArrayList(VARIANTS_KEY, variants)
+        }
     }
 
     override fun onPause() {
@@ -78,7 +86,34 @@ class VariantListPresenter @Inject constructor(): Presenter {
 
     fun onAddVariant(name: String) {
         currentVariantName = name
-        adapter.add(name)
+        variants.add(name)
+        variants.sort()
+        adapter.add(variants)
+
+        updateEditingEnabled()
+    }
+
+    fun onResetToDefaultClicked(){
+        view.createResetConfirmation()
+    }
+
+    fun onResetConfirmation(confirmed: Boolean){
+        if(confirmed) {
+            variantInteractor.resetVariants()
+            variants.clear()
+
+            variants.addAll(variantInteractor.getVariantNames())
+
+            variants.sort()
+            adapter.add(variants)
+            currentVariantName = variantInteractor.getCurrentVariant()?.name ?: variants.first()
+            currentPosition = variants.indexOf(currentVariantName)
+            adapter.setCurrentPosition(currentPosition)
+            view.notifyReset()
+        }
+
+        view.dismissResetConfirmation()
+        updateEditingEnabled()
     }
 
     fun onDeleteConfirmation(confirmed: Boolean) {
@@ -89,11 +124,16 @@ class VariantListPresenter @Inject constructor(): Presenter {
             variantInteractor.removeVariant(currentVariantName)
             variants.remove(currentVariantName)
 
-            // Set new current variant
-            currentPosition = Math.max(--currentPosition, 0)
-            currentVariantName = variants[currentPosition]
-            variantInteractor.setCurrentVariant(currentVariantName)
-            adapter.setCurrentPosition(currentPosition)
+            if(variants.size > 0) {
+                // Set new current variant
+                currentPosition = Math.max(--currentPosition, 0)
+                currentVariantName = variants[currentPosition]
+                variantInteractor.setCurrentVariant(currentVariantName)
+                adapter.setCurrentPosition(currentPosition)
+            }else{
+                currentPosition = 0
+                currentVariantName = ""
+            }
 
             // Notify the views
             adapter.remove(oldPosition)
@@ -101,6 +141,7 @@ class VariantListPresenter @Inject constructor(): Presenter {
         }
 
         view.dismissDeleteConfirmation()
+        updateEditingEnabled()
     }
 
     fun onUndoClicked() {
@@ -116,13 +157,21 @@ class VariantListPresenter @Inject constructor(): Presenter {
         view.goToMainApplication()
     }
 
+    fun updateEditingEnabled() {
+        view.setEditingEnabled(variants.size != 0)
+    }
+
     interface ViewSurface {
         fun createDeleteConfirmation()
         fun dismissDeleteConfirmation()
         fun notifyDeleted()
+        fun createResetConfirmation()
+        fun dismissResetConfirmation()
+        fun notifyReset()
         fun goToAddVariant()
         fun goToEditVariant(name: String)
         fun goToMainApplication()
+        fun setEditingEnabled(enabled : Boolean)
     }
 
     interface AdapterSurface {

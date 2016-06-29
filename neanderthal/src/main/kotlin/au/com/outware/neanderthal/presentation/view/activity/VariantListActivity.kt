@@ -28,6 +28,7 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
 
     private lateinit var adapter: VariantAdapter
     private var dialog: AlertDialog? = null
+    private var allowEditing: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,9 +58,19 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
             R.id.neanderthal_menu_item_edit -> presenter.onEditClicked()
             R.id.neanderthal_menu_item_delete -> presenter.onDeleteClicked()
             R.id.neanderthal_menu_item_launch_application -> presenter.onLaunchClicked()
+            R.id.neanderthal_menu_item_reset -> presenter.onResetToDefaultClicked()
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu?.let {
+            menu.findItem(R.id.neanderthal_menu_item_delete).setVisible(allowEditing)
+            menu.findItem(R.id.neanderthal_menu_item_edit).setVisible(allowEditing)
+        }
+
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onPause() {
@@ -127,11 +138,34 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         this.dialog = null
     }
 
+    override fun createResetConfirmation() {
+        dialog = AlertDialog.Builder(this)
+                .setTitle(R.string.neanderthal_reset_title)
+                .setMessage(R.string.neanderthal_reset_message)
+                .setPositiveButton(R.string.neanderthal_reset_positive) { dialog, which -> presenter.onResetConfirmation(true) }
+                .setNegativeButton(R.string.neanderthal_cancel) { dialog, which -> presenter.onResetConfirmation(false) }
+                .show()
+    }
+
+    override fun dismissResetConfirmation() {
+        dialog?.dismiss()
+        this.dialog = null
+    }
+
     override fun notifyDeleted() {
         layoutRoot.snackbar(R.string.neanderthal_delete_notice_message) {
             action(R.string.neanderthal_delete_notice_action) {
                 presenter.onUndoClicked()
             }
         }
+    }
+
+    override fun notifyReset() {
+        layoutRoot.snackbar(R.string.neanderthal_reset_notice_message)
+    }
+
+    override fun setEditingEnabled(enabled : Boolean){
+        allowEditing = enabled
+        invalidateOptionsMenu()
     }
 }

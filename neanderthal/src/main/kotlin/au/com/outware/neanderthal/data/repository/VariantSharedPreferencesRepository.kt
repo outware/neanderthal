@@ -19,7 +19,10 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
     companion object {
         const val SHARED_PREFERENCES_FILE_NAME = "_neanderthal_preferences"
         const val VARIANT_LIST = "variant_list"
+        const val DEFAULT_VARIANT_LIST = "default_variant_list"
         const val CURRENT_VARIANT = "current_variant"
+        const val DEFAULT_VARIANT = "default_variant"
+        const val VARIANT_DEFAULT = "_default"
         const val VARIANT_STRUCTURE = "variant_structure"
     }
 
@@ -41,12 +44,20 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
         }
 
         if (!sharedPreferences.contains(VARIANT_LIST)) {
+            var baseVariantDefaults = ArrayList<String>(baseVariants.size)
+            for(variant in baseVariants) {
+                baseVariantDefaults.add(variant.key + VARIANT_DEFAULT)
+            }
             editor.putStringSet(VARIANT_LIST, baseVariants.keys)
+            editor.putStringSet(DEFAULT_VARIANT_LIST, baseVariantDefaults.toSet())
+
             for (variant in baseVariants) {
                 editor.putString(variant.key, gson.toJson(variant.value))
+                editor.putString(variant.key + VARIANT_DEFAULT, gson.toJson(variant.value))
             }
             editor.putStringSet(VARIANT_STRUCTURE, structure)
             editor.putString(CURRENT_VARIANT, defaultVariant)
+            editor.putString(DEFAULT_VARIANT, defaultVariant)
             editor.apply()
         }
     }
@@ -105,5 +116,19 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
         } else {
             return null
         }
+    }
+
+    override fun resetVariants(){
+        getVariants().forEach { variant ->
+            removeVariant(variant.name!!)
+        }
+
+        sharedPreferences.getStringSet(DEFAULT_VARIANT_LIST, emptySet()).map { name ->
+            Variant(name.removeSuffix(VARIANT_DEFAULT), gson.fromJson(sharedPreferences.getString(name, null), klass))
+        }.forEach { variant ->
+            addVariant(variant)
+        }
+
+        setCurrentVariant(sharedPreferences.getString(DEFAULT_VARIANT, null))
     }
 }
