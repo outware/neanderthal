@@ -5,9 +5,9 @@ import android.view.ViewGroup
 import au.com.outware.neanderthal.data.model.Variant
 import au.com.outware.neanderthal.presentation.adapter.delegate.*
 import au.com.outware.neanderthal.presentation.presenter.EditVariantPresenter
+import au.com.outware.neanderthal.util.extensions.serializableFields
 import com.google.gson.annotations.SerializedName
 import java.lang.reflect.Field
-import java.lang.reflect.Modifier
 import java.util.*
 
 /**
@@ -40,13 +40,7 @@ class PropertyAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
     override fun setItem(variant: Variant) {
         this.variant = variant
 
-        val fields = variant.configuration!!.javaClass.declaredFields.filter {
-            field -> !Modifier.isPrivate(field.modifiers) && !Modifier.isTransient(field.modifiers)
-        }.sortedBy { selector -> selector.name }
-        properties.addAll(fields)
-        for(property in properties) {
-            property.isAccessible = true
-        }
+        properties.addAll(variant.configuration!!.javaClass.serializableFields.sortedBy { selector -> selector.name })
 
         setVariantName = (variant.name == null)
 
