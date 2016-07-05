@@ -46,7 +46,7 @@ class PropertyAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
 
         delegates.add(NamePropertyAdapterDelegate(variant, setVariantName, VIEW_TYPE_VARIANT_NAME))
         delegates.add(CharacterSequencePropertyAdapterDelegate(variant, setVariantName, VIEW_TYPE_CHARACTER_SEQUENCE))
-        delegates.add(BooleanSequencePropertyAdapterDelegate(variant, setVariantName, VIEW_TYPE_BOOLEAN))
+        delegates.add(BooleanPropertyAdapterDelegate(variant, setVariantName, VIEW_TYPE_BOOLEAN))
         delegates.add(NumericPropertyAdapterDelegate(variant, setVariantName, VIEW_TYPE_NUMBER))
     }
 

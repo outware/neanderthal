@@ -3,6 +3,7 @@ package au.com.outware.neanderthal.presentation.presenter
 import android.os.Bundle
 import au.com.outware.neanderthal.data.model.Variant
 import au.com.outware.neanderthal.domain.interactor.VariantInteractor
+import au.com.outware.neanderthal.util.extensions.serializableFields
 import javax.inject.Inject
 
 /**
@@ -18,6 +19,7 @@ class EditVariantPresenter @Inject constructor(): Presenter {
     lateinit internal var adapter: AdapterSurface
 
     lateinit internal var variant: Variant
+    internal var originalVariant: Variant? = null
     internal var newVariant: Boolean = false;
 
     // Lifecycle
@@ -25,6 +27,14 @@ class EditVariantPresenter @Inject constructor(): Presenter {
         var name: String? = parameters?.getString(ViewSurface.EXTRA_NAME)
         newVariant = name.isNullOrEmpty()
         variant = variantInteractor.getVariant(name)
+        if(!newVariant) {
+            originalVariant = variantInteractor.getVariant(name)
+            originalVariant!!.name = variant.name
+            // Such a hack. Copies the values of a configuration instead of creating a reference to the configuration
+            for(field in variant.configuration!!.javaClass.serializableFields) {
+                field.set(originalVariant!!.configuration!!, field.get(variant.configuration!!))
+            }
+        }
         adapter.setItem(variant)
     }
 
@@ -40,6 +50,21 @@ class EditVariantPresenter @Inject constructor(): Presenter {
     fun onBackClicked() {
         if(newVariant && variant.name.isNullOrEmpty()) {
             view.goToVariantList(false, "")
+        } else if(originalVariant != null) {
+            // Check if any changes would be lost
+            var changed = false;
+            for(field in variant.configuration!!.javaClass.serializableFields) {
+                if(!field.get(variant.configuration).equals(field.get(originalVariant!!.configuration))) {
+                    changed = true
+                    break
+                }
+            }
+
+            if(changed) {
+                view.createCancelConfirmation()
+            } else {
+                view.goToVariantList(false, "")
+            }
         } else {
             view.createCancelConfirmation()
         }
