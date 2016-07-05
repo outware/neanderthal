@@ -11,7 +11,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import au.com.outware.neanderthal.R
-import au.com.outware.neanderthal.application.NeanderthalApplication
+import au.com.outware.neanderthal.application.Neanderthal
 import au.com.outware.neanderthal.dagger.component.DaggerVariantListComponent
 import au.com.outware.neanderthal.dagger.module.VariantListModule
 import au.com.outware.neanderthal.presentation.adapter.VariantAdapter
@@ -37,7 +37,7 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         adapter = VariantAdapter { name, position -> presenter.onItemSelected(name, position) }
 
         DaggerVariantListComponent.builder()
-                .neanderthalApplicationComponent(NeanderthalApplication.neanderthalApplicationComponent)
+                .neanderthalComponent(Neanderthal.neanderthalComponent)
                 .variantListModule(VariantListModule(this, adapter))
                 .build()
                 .inject(this)

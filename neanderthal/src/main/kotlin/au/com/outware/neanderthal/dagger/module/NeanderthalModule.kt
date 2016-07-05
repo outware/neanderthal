@@ -1,6 +1,5 @@
 package au.com.outware.neanderthal.dagger.module
 
-import android.app.Application
 import android.content.Context
 import au.com.outware.neanderthal.data.factory.ConfigurationFactoryImpl
 import au.com.outware.neanderthal.data.repository.VariantRepository
@@ -16,19 +15,18 @@ import javax.inject.Singleton
  * @author timmutton
  */
 @Module
-class NeanderthallApplicationModule(private val application: Application,
-                                    private val klass: Class<out Any>,
-                                    private val baseVariants: Map<String, Any>,
-                                    private val defaultVariant: String) {
+class NeanderthalModule(private val context: Context,
+                        private val klass: Class<out Any>,
+                        private val baseVariants: Map<String, Any>,
+                        private val defaultVariant: String) {
     @Provides
     @Singleton
-    fun provideApplicationContext(): Context = application
+    fun provideApplicationContext(): Context = context
 
     @Provides
     @Singleton
     fun provideVariantRepository(): VariantRepository {
-        return VariantSharedPreferencesRepository(klass, application,
-                baseVariants, defaultVariant)
+        return VariantSharedPreferencesRepository(klass, context, baseVariants, defaultVariant)
     }
 
     @Provides
@@ -39,7 +37,8 @@ class NeanderthallApplicationModule(private val application: Application,
 
     @Provides
     @Singleton
-    fun provideVariantInteractor(variantRepository: VariantRepository, configurationRepository: ConfigurationFactory): VariantInteractor {
+    fun provideVariantInteractor(variantRepository: VariantRepository,
+                                 configurationRepository: ConfigurationFactory): VariantInteractor {
         return VariantUseCases(variantRepository, configurationRepository)
     }
 }
