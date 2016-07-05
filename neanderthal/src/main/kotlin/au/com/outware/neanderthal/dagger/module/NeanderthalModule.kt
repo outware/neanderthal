@@ -21,7 +21,7 @@ class NeanderthalModule(private val context: Context,
                         private val defaultVariant: String) {
     @Provides
     @Singleton
-    fun provideApplicationContext(): Context = context
+    fun provideApplicationContext(): Context = context.applicationContext
 
     @Provides
     @Singleton
