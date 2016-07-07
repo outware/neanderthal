@@ -52,12 +52,8 @@ class EditVariantPresenter @Inject constructor(): Presenter {
             view.goToVariantList(false, "")
         } else if(originalVariant != null) {
             // Check if any changes would be lost
-            var changed = false;
-            for(field in variant.configuration!!.javaClass.serializableFields) {
-                if(!field.get(variant.configuration).equals(field.get(originalVariant!!.configuration))) {
-                    changed = true
-                    break
-                }
+            var changed =  variant.configuration!!.javaClass.serializableFields.any { field ->
+                !field.get(variant.configuration).equals(field.get(originalConfiguration))
             }
 
             if(changed) {
