@@ -8,13 +8,17 @@ import au.com.outware.neanderthal.domain.factory.ConfigurationFactory
  * @author timmutton
  */
 class VariantUseCases(val variantRepository: VariantRepository, var configurationRepository: ConfigurationFactory): VariantInteractor {
-    override fun createOrUpdateVariant(variant: Variant) {
+    override fun saveVariant(variant: Variant) {
         if(variant.name == null) {
             throw IllegalArgumentException("Added or updated variant must have a name")
         }
 
         variantRepository.addVariant(variant)
         variantRepository.setCurrentVariant(variant.name!!)
+    }
+
+    override fun deleteVariant(name: String) {
+        variantRepository.removeVariant(name)
     }
 
     override fun getCurrentVariant(): Variant? {
@@ -38,10 +42,6 @@ class VariantUseCases(val variantRepository: VariantRepository, var configuratio
 
     override fun getVariantNames(): List<String> {
         return variantRepository.getVariants().map { variant -> variant.name!! }.toList()
-    }
-
-    override fun removeVariant(name: String) {
-        variantRepository.removeVariant(name)
     }
 
     override fun setCurrentVariant(name: String) {

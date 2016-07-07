@@ -30,7 +30,7 @@ class VariantListPresenter @Inject constructor(): Presenter {
 
     private var deletedVariant: Variant? = null
 
-    // Lifecycle
+    // region Lifecycle
     override fun onCreate(parameters: Bundle?) {
         if(parameters != null) {
             currentPosition = parameters.getInt(CURRENT_POSITION_KEY)
@@ -64,6 +64,7 @@ class VariantListPresenter @Inject constructor(): Presenter {
     override fun onPause() {
         view.dismissDeleteConfirmation()
     }
+    // endregion
 
     fun onItemSelected(name: String, position: Int) {
         variantInteractor.setCurrentVariant(name)
@@ -121,7 +122,7 @@ class VariantListPresenter @Inject constructor(): Presenter {
             deletedVariant = variantInteractor.getCurrentVariant()
 
             val oldPosition = currentPosition
-            variantInteractor.removeVariant(currentVariantName)
+            variantInteractor.deleteVariant(currentVariantName)
             variants.remove(currentVariantName)
 
             if(variants.size > 0) {
@@ -146,7 +147,7 @@ class VariantListPresenter @Inject constructor(): Presenter {
 
     fun onUndoClicked() {
         deletedVariant?.let {
-            variantInteractor.createOrUpdateVariant(deletedVariant!!)
+            variantInteractor.saveVariant(deletedVariant!!)
             val name = deletedVariant!!.name!!
             variants.add(name)
             adapter.add(name)
