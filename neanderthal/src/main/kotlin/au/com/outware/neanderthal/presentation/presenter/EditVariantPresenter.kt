@@ -55,17 +55,19 @@ class EditVariantPresenter @Inject constructor(): Presenter {
             view.goToVariantList(false, "")
         } else if(originalConfiguration != null) {
             // Check if any changes would be lost
-            var changed =  variant.configuration!!.javaClass.serializableFields.any { field ->
-                !field.get(variant.configuration).equals(field.get(originalConfiguration))
-            }
-
-            if(changed) {
+            if(hasChanges()) {
                 view.createCancelConfirmation()
             } else {
                 view.goToVariantList(false, "")
             }
         } else {
             view.createCancelConfirmation()
+        }
+    }
+
+    private fun hasChanges(): Boolean {
+        return variant.configuration!!.javaClass.serializableFields.any { field ->
+            !field.get(variant.configuration).equals(field.get(originalConfiguration))
         }
     }
 
