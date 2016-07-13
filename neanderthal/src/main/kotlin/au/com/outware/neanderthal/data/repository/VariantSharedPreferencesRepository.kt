@@ -31,7 +31,8 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
     private val gson: Gson = GsonBuilder().registerTypeAdapter(CharSequence::class.java, CharSequenceDeserializer()).create()
 
     init {
-        sharedPreferences = context.getSharedPreferences("${context.packageName}$SHARED_PREFERENCES_FILE_NAME", Context.MODE_PRIVATE)
+        val formattedPackageName = context.packageName.capitalize().replace(".", "_")
+        sharedPreferences = context.getSharedPreferences("$formattedPackageName$SHARED_PREFERENCES_FILE_NAME", Context.MODE_PRIVATE)
         editor = sharedPreferences.edit()
 
         val structure = klass.declaredFields

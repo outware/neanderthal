@@ -28,7 +28,7 @@ class VariantUseCasesTest {
         val updateVariant = Variant("test", null)
 
         // Act
-        variantUseCases.createOrUpdateVariant(updateVariant)
+        variantUseCases.saveVariant(updateVariant)
 
         // Assert
         verify(variantUseCases.variantRepository, times(1)).addVariant(any())
@@ -118,7 +118,7 @@ class VariantUseCasesTest {
     @Test
     fun removeCurrentVariant() {
         // Act
-        variantUseCases.removeVariant("test")
+        variantUseCases.deleteVariant("test")
 
         // Assert
         verify(variantUseCases.variantRepository, times(1)).removeVariant(Mockito.anyString())
