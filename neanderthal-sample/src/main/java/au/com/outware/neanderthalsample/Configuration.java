@@ -13,8 +13,9 @@ public class Configuration {
     CharSequence baseUrl;
     @SerializedName("Enable Logging")
     boolean enableLogging;
+    // If you assign a value to a variable, that value will be the default when creating a new variant
     @SerializedName("Timeout")
-    int timeout;
+    int timeout = 10_000;
 
     // Must have a default constructor for GSON to work
     public Configuration() { }
