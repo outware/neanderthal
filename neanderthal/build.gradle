@@ -7,7 +7,7 @@ apply plugin: 'com.getkeepsafe.dexcount'
 
 buildscript {
     ext {
-        daggerVersion = '2.0'
+        daggerVersion = '2.4'
         kotlinVersion = '1.0.3'
         supportLibraryVersion = '23.3.0'
     }
