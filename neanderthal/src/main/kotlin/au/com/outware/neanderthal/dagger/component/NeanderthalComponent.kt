@@ -1,7 +1,7 @@
 package au.com.outware.neanderthal.dagger.component
 
 import android.content.Context
-import au.com.outware.neanderthal.application.Neanderthal
+import au.com.outware.neanderthal.Neanderthal
 import au.com.outware.neanderthal.dagger.module.NeanderthalModule
 import au.com.outware.neanderthal.data.repository.VariantRepository
 import au.com.outware.neanderthal.domain.factory.ConfigurationFactory

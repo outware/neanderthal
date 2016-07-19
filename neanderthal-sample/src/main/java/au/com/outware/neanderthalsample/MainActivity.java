@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import au.com.outware.neanderthal.application.Neanderthal;
+import au.com.outware.neanderthal.Neanderthal;
 
 /**
  * @author timmutton

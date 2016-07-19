@@ -10,8 +10,8 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import au.com.outware.neanderthal.Neanderthal
 import au.com.outware.neanderthal.R
-import au.com.outware.neanderthal.application.Neanderthal
 import au.com.outware.neanderthal.dagger.component.DaggerVariantListComponent
 import au.com.outware.neanderthal.dagger.module.VariantListModule
 import au.com.outware.neanderthal.presentation.adapter.VariantAdapter
@@ -111,14 +111,13 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
             filterIntent.setPackage(packageName)
 
             // Get the first that isnt the current class
-            val launchActivity = packageManager.queryIntentActivities(filterIntent, PackageManager.GET_RESOLVED_FILTER)
+            val resolveInfo = packageManager.queryIntentActivities(filterIntent, PackageManager.GET_RESOLVED_FILTER)
                     .filter { info -> !info.activityInfo.name.equals(localClassName) }
-                    .map { info -> info.activityInfo }
                     .first()
 
             // Launch the activity
             val intent = Intent()
-            intent.component = ComponentName(this, launchActivity.name)
+            intent.component = ComponentName(this, resolveInfo.activityInfo.name)
             startActivity(intent)
         }
 

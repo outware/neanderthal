@@ -1,4 +1,4 @@
-package au.com.outware.neanderthal.application
+package au.com.outware.neanderthal
 
 import android.content.Context
 import au.com.outware.neanderthal.dagger.component.DaggerNeanderthalComponent

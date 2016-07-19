@@ -12,7 +12,7 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
-import au.com.outware.neanderthal.application.Neanderthal;
+import au.com.outware.neanderthal.Neanderthal;
 
 /**
  * @author timmutton

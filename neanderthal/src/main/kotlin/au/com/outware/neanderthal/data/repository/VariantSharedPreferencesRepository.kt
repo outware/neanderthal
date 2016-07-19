@@ -44,22 +44,27 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
             editor.clear()
         }
 
+        storeDefaults(baseVariants)
+
         if (!sharedPreferences.contains(VARIANT_LIST)) {
-            var baseVariantDefaults = ArrayList<String>(baseVariants.size)
-            for(variant in baseVariants) {
-                baseVariantDefaults.add(variant.key + VARIANT_DEFAULT)
-            }
             editor.putStringSet(VARIANT_LIST, baseVariants.keys)
-            editor.putStringSet(DEFAULT_VARIANT_LIST, baseVariantDefaults.toSet())
 
             for (variant in baseVariants) {
                 editor.putString(variant.key, gson.toJson(variant.value))
-                editor.putString(variant.key + VARIANT_DEFAULT, gson.toJson(variant.value))
             }
             editor.putStringSet(VARIANT_STRUCTURE, structure)
             editor.putString(CURRENT_VARIANT, defaultVariant)
             editor.putString(DEFAULT_VARIANT, defaultVariant)
             editor.apply()
+        }
+    }
+
+    private fun storeDefaults(baseVariants: Map<String, Any>) {
+        editor.putStringSet(DEFAULT_VARIANT_LIST,
+                baseVariants.map { variant -> variant.key + VARIANT_DEFAULT }.toSet())
+
+        baseVariants.forEach { variant ->
+            editor.putString(variant.key + VARIANT_DEFAULT, gson.toJson(variant.value))
         }
     }
 

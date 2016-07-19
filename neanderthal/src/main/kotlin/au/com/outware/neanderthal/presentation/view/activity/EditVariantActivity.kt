@@ -7,7 +7,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import au.com.outware.neanderthal.R
-import au.com.outware.neanderthal.application.Neanderthal
+import au.com.outware.neanderthal.Neanderthal
 import au.com.outware.neanderthal.dagger.component.DaggerEditVariantComponent
 import au.com.outware.neanderthal.dagger.module.EditVariantModule
 import au.com.outware.neanderthal.presentation.adapter.PropertyAdapter

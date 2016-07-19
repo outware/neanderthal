@@ -7,8 +7,8 @@ apply plugin: 'com.getkeepsafe.dexcount'
 
 buildscript {
     ext {
-        daggerVersion = '2.4'
-        kotlinVersion = '1.0.1-2'
+        daggerVersion = '2.0'
+        kotlinVersion = '1.0.3'
         supportLibraryVersion = '23.3.0'
     }
 
@@ -51,7 +51,7 @@ ext {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
     resourcePrefix "neanderthal_"
 
     defaultConfig {
@@ -126,6 +126,9 @@ bintray {
         }
     }
 }
+
+bintrayUpload.dependsOn install
+install.dependsOn assembleRelease
 
 dependencies {
     compile 'com.google.code.gson:gson:2.4',
