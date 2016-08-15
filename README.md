@@ -6,8 +6,14 @@ This serves a similar purpose to setting build variables for different variants,
 
 ##Usage
 
-1. Add `compile 'au.com.outware:neanderthal:<version>'` to your application's dependencies
-2. Create an application class that extends from `NeanderthalApplication` and call `initialise` from within the applications `onCreate` function, supplying the class type of your configuration, the different variants and the default variant. For examples of how to do this, refer to `SampleApplication.java` in the `neanderthal-sample` module.
+1. Add `compile 'au.com.outware:neanderthal:<version>'` to your application's dependencies.
+2. Call `Neanderthal.initialise()`` to initialise the library by supplying a Context, an initial list of variants and
+the name of the default variant.
+3. Once initialised, call `Neanderthal.getConfiguration()`` to get the currently selected configuration (or the
+default configuration if none are selected)
+
+For examples of how to do this, refer to `SampleApplication.java` and `MainActivity.java` in the `neanderthal-sample`
+module.
 	
 ##License
 		The MIT License (MIT)

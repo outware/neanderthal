@@ -1,15 +1,17 @@
 package au.com.outware.neanderthal.presentation.view.activity
 
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import au.com.outware.neanderthal.Neanderthal
 import au.com.outware.neanderthal.R
-import au.com.outware.neanderthal.application.NeanderthalApplication
 import au.com.outware.neanderthal.dagger.component.DaggerVariantListComponent
 import au.com.outware.neanderthal.dagger.module.VariantListModule
 import au.com.outware.neanderthal.presentation.adapter.VariantAdapter
@@ -26,6 +28,7 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
 
     private lateinit var adapter: VariantAdapter
     private var dialog: AlertDialog? = null
+    private var allowEditing: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +37,7 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         adapter = VariantAdapter { name, position -> presenter.onItemSelected(name, position) }
 
         DaggerVariantListComponent.builder()
-                .neanderthalApplicationComponent(NeanderthalApplication.neanderthalApplicationComponent)
+                .neanderthalComponent(Neanderthal.neanderthalComponent)
                 .variantListModule(VariantListModule(this, adapter))
                 .build()
                 .inject(this)
@@ -52,11 +55,22 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.menu_item_edit -> presenter.onEditClicked()
-            R.id.menu_item_delete -> presenter.onDeleteClicked()
+            R.id.neanderthal_menu_item_edit -> presenter.onEditClicked()
+            R.id.neanderthal_menu_item_delete -> presenter.onDeleteClicked()
+            R.id.neanderthal_menu_item_launch_application -> presenter.onLaunchClicked()
+            R.id.neanderthal_menu_item_reset -> presenter.onResetToDefaultClicked()
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu?.let {
+            menu.findItem(R.id.neanderthal_menu_item_delete).setVisible(allowEditing)
+            menu.findItem(R.id.neanderthal_menu_item_edit).setVisible(allowEditing)
+        }
+
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onPause() {
@@ -85,6 +99,30 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         navigate(EditVariantActivity::class, EditVariantPresenter.ViewSurface.EXTRA_NAME to name)
     }
 
+    override fun goToMainApplication() {
+        val defaultLaunchIntent = packageManager.getLaunchIntentForPackage(packageName)
+
+        // If neanderthal is not the default launch intent
+        if(!defaultLaunchIntent.component.className.equals(localClassName)) {
+            startActivity(defaultLaunchIntent)
+        } else {
+            // Filter for main intents for this package
+            val filterIntent = Intent(Intent.ACTION_MAIN)
+            filterIntent.setPackage(packageName)
+
+            // Get the first that isnt the current class
+            val resolveInfo = packageManager.queryIntentActivities(filterIntent, PackageManager.GET_RESOLVED_FILTER)
+                    .filter { info -> !info.activityInfo.name.equals(localClassName) }
+                    .first()
+
+            // Launch the activity
+            val intent = Intent()
+            intent.component = ComponentName(this, resolveInfo.activityInfo.name)
+            startActivity(intent)
+        }
+
+    }
+
     override fun createDeleteConfirmation() {
         dialog = AlertDialog.Builder(this)
                 .setTitle(R.string.neanderthal_delete_title)
@@ -99,11 +137,34 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         this.dialog = null
     }
 
+    override fun createResetConfirmation() {
+        dialog = AlertDialog.Builder(this)
+                .setTitle(R.string.neanderthal_reset_title)
+                .setMessage(R.string.neanderthal_reset_message)
+                .setPositiveButton(R.string.neanderthal_reset_positive) { dialog, which -> presenter.onResetConfirmation(true) }
+                .setNegativeButton(R.string.neanderthal_cancel) { dialog, which -> presenter.onResetConfirmation(false) }
+                .show()
+    }
+
+    override fun dismissResetConfirmation() {
+        dialog?.dismiss()
+        this.dialog = null
+    }
+
     override fun notifyDeleted() {
         layoutRoot.snackbar(R.string.neanderthal_delete_notice_message) {
             action(R.string.neanderthal_delete_notice_action) {
                 presenter.onUndoClicked()
             }
         }
+    }
+
+    override fun notifyReset() {
+        layoutRoot.snackbar(R.string.neanderthal_reset_notice_message)
+    }
+
+    override fun setEditingEnabled(enabled : Boolean){
+        allowEditing = enabled
+        invalidateOptionsMenu()
     }
 }

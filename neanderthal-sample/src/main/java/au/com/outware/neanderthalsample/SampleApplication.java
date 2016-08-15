@@ -1,7 +1,7 @@
 package au.com.outware.neanderthalsample;
 
+import android.app.Application;
 import android.support.v7.app.AppCompatDelegate;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,12 +12,12 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
-import au.com.outware.neanderthal.application.NeanderthalApplication;
+import au.com.outware.neanderthal.Neanderthal;
 
 /**
  * @author timmutton
  */
-public class SampleApplication extends NeanderthalApplication {
+public class SampleApplication extends Application {
     public static final String PRODUCTION = "Production";
     public static final String STAGING = "Staging";
     public static final String DEBUG = "Debug";
@@ -32,22 +32,22 @@ public class SampleApplication extends NeanderthalApplication {
     public void onCreate() {
         super.onCreate();
 
-        try {
-            initialiseFromJson();
-        } catch (IOException e) {
-            Log.e(this.getClass().getSimpleName(), e.getMessage(), e);
-        }
+        initialiseFromJson();
 //        initialiseByHand();
     }
 
     // An example of how you could initialise Neanderthal from a local JSON file
-    private void initialiseFromJson() throws IOException {
-        // The type adapter is only needed if you have a CharSequence in your model. If you're just using strings
-        // you can skip this part
-        Gson gson = new GsonBuilder().registerTypeAdapter(CharSequence.class, new CharSequenceDeserializer()).create();
-        Reader reader = new InputStreamReader(getAssets().open(VARIANTS_FILE));
-        BaseVariants baseVariants = gson.fromJson(reader, BaseVariants.class);
-        initialise(Configuration.class, baseVariants.variants, baseVariants.defaultVariant);
+    private void initialiseFromJson(){
+        try {
+			// The type adapter is only needed if you have a CharSequence in your model. If you're just using strings
+        	// you can just use Gson gson = new Gson();
+            Gson gson = new GsonBuilder().registerTypeAdapter(CharSequence.class, new CharSequenceDeserializer()).create();
+            Reader reader = new InputStreamReader(getAssets().open(VARIANTS_FILE));
+            BaseVariants baseVariants = gson.fromJson(reader, BaseVariants.class);
+            Neanderthal.initialise(this, baseVariants.variants, baseVariants.defaultVariant);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // An example of how you could initialise Neanderthal entirely within code
@@ -59,6 +59,6 @@ public class SampleApplication extends NeanderthalApplication {
         baseVariants.put(PRODUCTION, production);
         baseVariants.put(STAGING, staging);
         baseVariants.put(DEBUG, debug);
-        initialise(Configuration.class, baseVariants, PRODUCTION);
+        Neanderthal.initialise(this, baseVariants, PRODUCTION);
     }
 }

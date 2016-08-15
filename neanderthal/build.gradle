@@ -3,13 +3,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.getkeepsafe.dexcount'
 
 buildscript {
     ext {
         daggerVersion = '2.4'
-        kotlinVersion = '1.0.1-2'
+        kotlinVersion = '1.0.3'
         supportLibraryVersion = '23.3.0'
-        ankoVersion = '0.8.3'
     }
 
     repositories {
@@ -38,7 +38,7 @@ ext {
     siteUrl = 'https://github.com/outware/neanderthal/'
     gitUrl = 'https://github.com/outware/neanderthal.git'
 
-    libraryVersion = '1.2.0'
+    libraryVersion = "${libraryVersion}"
 
     developerId = 'outware'
     developerName = 'Outware Mobile'
@@ -51,14 +51,14 @@ ext {
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
     resourcePrefix "neanderthal_"
 
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
-        versionName "1.2.0"
+        versionName "${libraryVersion}"
     }
 
     buildTypes {
@@ -126,6 +126,9 @@ bintray {
         }
     }
 }
+
+bintrayUpload.dependsOn install
+install.dependsOn assembleRelease
 
 dependencies {
     compile 'com.google.code.gson:gson:2.4',

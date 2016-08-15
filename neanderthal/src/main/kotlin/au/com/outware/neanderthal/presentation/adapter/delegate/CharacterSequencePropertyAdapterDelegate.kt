@@ -36,7 +36,7 @@ class CharacterSequencePropertyAdapterDelegate(val variant: Variant,
         editValue.setText(configurationProperty.get(variant.configuration) as String? ?: "")
         editValue.addTextChangedListener(object : SimpleTextWatcher() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                configurationProperty.set(variant.configuration, s)
+                configurationProperty.set(variant.configuration, s.toString())
             }
         })
     }

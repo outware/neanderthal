@@ -9,7 +9,7 @@ import dagger.Component
  * @author timmutton
  */
 @ActivityScope
-@Component(dependencies = arrayOf(NeanderthalApplicationComponent::class), modules = arrayOf(EditVariantModule::class))
+@Component(dependencies = arrayOf(NeanderthalComponent::class), modules = arrayOf(EditVariantModule::class))
 interface EditVariantComponent {
     fun inject(activity: EditVariantActivity)
 }

@@ -13,9 +13,9 @@ import java.lang.reflect.Field
 /**
  * @author timmutton
  */
-class BooleanSequencePropertyAdapterDelegate(val variant: Variant,
-                                             val setVariantName: Boolean,
-                                             override val viewType: Int): AdapterDelegate<Field> {
+class BooleanPropertyAdapterDelegate(val variant: Variant,
+                                     val setVariantName: Boolean,
+                                     override val viewType: Int): AdapterDelegate<Field> {
     override fun isForViewType(items: List<Field>, position: Int): Boolean {
         if(setVariantName && position == 0) {
             return false;

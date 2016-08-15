@@ -14,4 +14,6 @@ interface VariantRepository {
 
     fun setCurrentVariant(name: String)
     fun getCurrentVariant(): Variant?
+
+    fun resetVariants()
 }
