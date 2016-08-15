@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Configuration configuration = Neanderthal.<Configuration>getConfiguration();
+        Configuration configuration = Neanderthal.getConfiguration();
 
         TextView baseUrlText = (TextView)findViewById(R.id.base_url);
         baseUrlText.setText (String.format("Base URL: %s", configuration.baseUrl));
