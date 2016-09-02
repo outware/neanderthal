@@ -1,12 +1,12 @@
 package au.com.outware.neanderthal.presentation.adapter.delegate
 
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.ViewGroup
 import au.com.outware.neanderthal.R
 import au.com.outware.neanderthal.data.model.Variant
 import au.com.outware.neanderthal.presentation.adapter.PropertyAdapter
 import au.com.outware.neanderthal.presentation.adapter.SimpleViewHolder
-import au.com.outware.neanderthal.util.SimpleTextWatcher
 import au.com.outware.neanderthal.util.extensions.inflateLayout
 import kotlinx.android.synthetic.main.neanderthal_item_detail_text.view.*
 import java.lang.reflect.Field
@@ -33,11 +33,14 @@ class CharacterSequencePropertyAdapterDelegate(val variant: Variant,
         val configurationProperty = items[position - if (setVariantName) 1 else 0]
 
         textKey.text = PropertyAdapter.getPropertyName(configurationProperty)
-        editValue.setText(configurationProperty.get(variant.configuration) as String? ?: "")
-        editValue.addTextChangedListener(object : SimpleTextWatcher() {
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                configurationProperty.set(variant.configuration, s.toString())
+        val propertyValue: CharSequence? = configurationProperty.get(variant.configuration) as String? ?: ""
+        editValue.setText(propertyValue)
+        editValue.setOnTextChangedListener { text ->
+            val newValue = text.toString()
+            if(!newValue.equals(propertyValue)) {
+                Log.d(this.javaClass.simpleName, newValue)
+                configurationProperty.set(variant.configuration, newValue)
             }
-        })
+        }
     }
 }
