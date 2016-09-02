@@ -17,7 +17,7 @@
         android:layout_marginRight="8dp"
         android:layout_weight="1" />
 
-    <EditText
+    <au.com.outware.neanderthal.util.widget.SingleTextChangedListenerEditText
         android:id="@+id/editValue"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
