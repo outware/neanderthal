@@ -34,7 +34,6 @@ class CharacterSequencePropertyAdapterDelegate(val variant: Variant,
 
         textKey.text = PropertyAdapter.getPropertyName(configurationProperty)
         val propertyValue: CharSequence? = configurationProperty.get(variant.configuration) as String? ?: ""
-        editValue.setText(propertyValue)
         editValue.setOnTextChangedListener { text ->
             val newValue = text.toString()
             if(!newValue.equals(propertyValue)) {
@@ -42,5 +41,6 @@ class CharacterSequencePropertyAdapterDelegate(val variant: Variant,
                 configurationProperty.set(variant.configuration, newValue)
             }
         }
+        editValue.setText(propertyValue)
     }
 }
