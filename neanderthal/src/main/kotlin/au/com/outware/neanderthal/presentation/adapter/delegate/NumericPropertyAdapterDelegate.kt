@@ -2,6 +2,7 @@ package au.com.outware.neanderthal.presentation.adapter.delegate
 
 import android.support.v7.widget.RecyclerView
 import android.text.InputType
+import android.text.TextUtils
 import android.view.ViewGroup
 import au.com.outware.neanderthal.R
 import au.com.outware.neanderthal.data.model.Variant
@@ -50,12 +51,14 @@ class NumericPropertyAdapterDelegate(val variant: Variant,
         editValue.setText(DECIMAL_FORMAT.format(valueNumber))
         editValue.addTextChangedListener(object : SimpleTextWatcher() {
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                when(configurationProperty.get(variant.configuration)) {
-                    is Int -> configurationProperty.setInt(variant.configuration, Integer.valueOf(s.toString()))
-                    is Float -> configurationProperty.setFloat(variant.configuration, java.lang.Float.valueOf(s.toString()))
-                    is Double -> configurationProperty.setDouble(variant.configuration, java.lang.Double.valueOf(s.toString()))
-                    is Short -> configurationProperty.setShort(variant.configuration, java.lang.Short.valueOf(s.toString()))
-                    is Long -> configurationProperty.setLong(variant.configuration, java.lang.Long.valueOf(s.toString()))
+                if(!TextUtils.isEmpty(s) && TextUtils.isDigitsOnly(s)){
+                    when(configurationProperty.get(variant.configuration)) {
+                        is Int -> configurationProperty.setInt(variant.configuration, Integer.valueOf(s.toString()))
+                        is Float -> configurationProperty.setFloat(variant.configuration, java.lang.Float.valueOf(s.toString()))
+                        is Double -> configurationProperty.setDouble(variant.configuration, java.lang.Double.valueOf(s.toString()))
+                        is Short -> configurationProperty.setShort(variant.configuration, java.lang.Short.valueOf(s.toString()))
+                        is Long -> configurationProperty.setLong(variant.configuration, java.lang.Long.valueOf(s.toString()))
+                    }
                 }
             }
         })
