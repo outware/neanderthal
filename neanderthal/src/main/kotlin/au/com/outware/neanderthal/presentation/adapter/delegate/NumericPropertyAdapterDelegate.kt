@@ -7,7 +7,6 @@ import au.com.outware.neanderthal.R
 import au.com.outware.neanderthal.data.model.Variant
 import au.com.outware.neanderthal.presentation.adapter.PropertyAdapter
 import au.com.outware.neanderthal.presentation.adapter.SimpleViewHolder
-import au.com.outware.neanderthal.util.SimpleTextWatcher
 import au.com.outware.neanderthal.util.extensions.inflateLayout
 import kotlinx.android.synthetic.main.neanderthal_item_detail_text.view.*
 import java.lang.reflect.Field
@@ -47,17 +46,15 @@ class NumericPropertyAdapterDelegate(val variant: Variant,
         textKey.text = PropertyAdapter.getPropertyName(configurationProperty)
 
         editValue.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED
-        editValue.setText(DECIMAL_FORMAT.format(valueNumber))
-        editValue.addTextChangedListener(object : SimpleTextWatcher() {
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                when(configurationProperty.get(variant.configuration)) {
-                    is Int -> configurationProperty.setInt(variant.configuration, Integer.valueOf(s.toString()))
-                    is Float -> configurationProperty.setFloat(variant.configuration, java.lang.Float.valueOf(s.toString()))
-                    is Double -> configurationProperty.setDouble(variant.configuration, java.lang.Double.valueOf(s.toString()))
-                    is Short -> configurationProperty.setShort(variant.configuration, java.lang.Short.valueOf(s.toString()))
-                    is Long -> configurationProperty.setLong(variant.configuration, java.lang.Long.valueOf(s.toString()))
-                }
+        editValue.setOnTextChangedListener { text ->
+            when(configurationProperty.get(variant.configuration)) {
+                is Int -> configurationProperty.setInt(variant.configuration, Integer.valueOf(text.toString()))
+                is Float -> configurationProperty.setFloat(variant.configuration, java.lang.Float.valueOf(text.toString()))
+                is Double -> configurationProperty.setDouble(variant.configuration, java.lang.Double.valueOf(text.toString()))
+                is Short -> configurationProperty.setShort(variant.configuration, java.lang.Short.valueOf(text.toString()))
+                is Long -> configurationProperty.setLong(variant.configuration, java.lang.Long.valueOf(text.toString()))
             }
-        })
+        }
+        editValue.setText(DECIMAL_FORMAT.format(valueNumber))
     }
 }
