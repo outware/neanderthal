@@ -48,7 +48,7 @@ class NumericPropertyAdapterDelegate(val variant: Variant,
 
         editValue.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED
         editValue.setOnTextChangedListener { text ->
-            if(!TextUtils.isEmpty(s) && TextUtils.isDigitsOnly(s)){
+            if(!TextUtils.isEmpty(text) && TextUtils.isDigitsOnly(text)){
                 when(configurationProperty.get(variant.configuration)) {
                     is Int -> configurationProperty.setInt(variant.configuration, Integer.valueOf(text.toString()))
                     is Float -> configurationProperty.setFloat(variant.configuration, java.lang.Float.valueOf(text.toString()))

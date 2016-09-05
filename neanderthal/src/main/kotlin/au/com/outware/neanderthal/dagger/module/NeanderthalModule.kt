@@ -21,19 +21,16 @@ class NeanderthalModule(private val context: Context,
                         private val defaultVariant: String) {
     @Provides
     @Singleton
-    fun provideApplicationContext(): Context = context.applicationContext
+    fun provideApplicationContext() = context.applicationContext
 
     @Provides
     @Singleton
-    fun provideVariantRepository(): VariantRepository {
-        return VariantSharedPreferencesRepository(klass, context, baseVariants, defaultVariant)
-    }
+    fun provideVariantRepository(): VariantRepository =
+            VariantSharedPreferencesRepository(klass, context, baseVariants, defaultVariant)
 
     @Provides
     @Singleton
-    fun provideConfigurationRepository(): ConfigurationFactory {
-        return ConfigurationFactoryImpl(klass)
-    }
+    fun provideConfigurationRepository(): ConfigurationFactory = ConfigurationFactoryImpl(klass)
 
     @Provides
     @Singleton

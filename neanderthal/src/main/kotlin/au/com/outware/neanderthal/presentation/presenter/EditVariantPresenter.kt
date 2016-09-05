@@ -1,6 +1,7 @@
 package au.com.outware.neanderthal.presentation.presenter
 
 import android.os.Bundle
+import au.com.outware.neanderthal.dagger.scope.PerActivity
 import au.com.outware.neanderthal.data.model.Variant
 import au.com.outware.neanderthal.domain.factory.ConfigurationFactory
 import au.com.outware.neanderthal.domain.interactor.VariantInteractor
@@ -10,24 +11,18 @@ import javax.inject.Inject
 /**
  * @author timmutton
  */
-class EditVariantPresenter @Inject constructor(): Presenter {
-    @Inject
-    lateinit internal var variantInteractor: VariantInteractor
-    @Inject
-    lateinit internal var configurationRepository: ConfigurationFactory
-
-    @Inject
-    lateinit internal var view: ViewSurface
-    @Inject
-    lateinit internal var adapter: AdapterSurface
-
+@PerActivity
+class EditVariantPresenter @Inject constructor(val variantInteractor: VariantInteractor,
+                                               val configurationRepository: ConfigurationFactory,
+                                               val view: ViewSurface,
+                                               val adapter: AdapterSurface): Presenter {
     lateinit internal var variant: Variant
     internal var originalConfiguration: Any? = null
     internal var newVariant: Boolean = false;
 
     // region Lifecycle
     override fun onCreate(parameters: Bundle?) {
-        var name: String? = parameters?.getString(ViewSurface.EXTRA_NAME)
+        val name: String? = parameters?.getString(ViewSurface.EXTRA_NAME)
         newVariant = name.isNullOrEmpty()
         variant = variantInteractor.getVariant(name)
         if(!newVariant) {

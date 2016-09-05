@@ -9,20 +9,14 @@ import javax.inject.Inject
 /**
  * @author timmutton
  */
-class VariantListPresenter @Inject constructor(): Presenter {
+class VariantListPresenter @Inject constructor(val variantInteractor: VariantInteractor,
+                                               val view: ViewSurface,
+                                               val adapter: AdapterSurface): Presenter {
     companion object {
         val CURRENT_POSITION_KEY = "current_position"
         val CURRENT_VARIANT_NAME_KEY = "current_variant_name"
         val VARIANTS_KEY = "variants"
     }
-
-    @Inject
-    lateinit internal var variantInteractor: VariantInteractor
-
-    @Inject
-    lateinit internal var view: ViewSurface
-    @Inject
-    lateinit internal var adapter: AdapterSurface
 
     lateinit private var currentVariantName: String
     lateinit private var variants: ArrayList<String>
