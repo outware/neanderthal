@@ -10,21 +10,16 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-import au.com.outware.neanderthal.Neanderthal
 import au.com.outware.neanderthal.R
-import au.com.outware.neanderthal.dagger.component.DaggerVariantListComponent
-import au.com.outware.neanderthal.dagger.module.VariantListModule
 import au.com.outware.neanderthal.presentation.adapter.VariantAdapter
 import au.com.outware.neanderthal.presentation.presenter.EditVariantPresenter
 import au.com.outware.neanderthal.presentation.presenter.VariantListPresenter
 import au.com.outware.neanderthal.util.DividerItemDecoration
 import au.com.outware.neanderthal.util.extensions.*
 import kotlinx.android.synthetic.main.neanderthal_activity_variant_list.*
-import javax.inject.Inject
 
 class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurface {
-    @Inject
-    lateinit internal var presenter: VariantListPresenter
+    lateinit private var presenter: VariantListPresenter
 
     private lateinit var adapter: VariantAdapter
     private var dialog: AlertDialog? = null
@@ -36,12 +31,7 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
 
         adapter = VariantAdapter { name, position -> presenter.onItemSelected(name, position) }
 
-        DaggerVariantListComponent.builder()
-                .neanderthalComponent(Neanderthal.neanderthalComponent)
-                .variantListModule(VariantListModule(this, adapter))
-                .build()
-                .inject(this)
-
+        presenter = VariantListPresenter(this, adapter)
         presenter.onCreate(savedInstanceState)
 
         variantList.layoutManager = LinearLayoutManager(this)

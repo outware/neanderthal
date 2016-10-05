@@ -7,23 +7,18 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import au.com.outware.neanderthal.R
-import au.com.outware.neanderthal.Neanderthal
-import au.com.outware.neanderthal.dagger.component.DaggerEditVariantComponent
-import au.com.outware.neanderthal.dagger.module.EditVariantModule
 import au.com.outware.neanderthal.presentation.adapter.PropertyAdapter
 import au.com.outware.neanderthal.presentation.presenter.EditVariantPresenter
 import au.com.outware.neanderthal.util.extensions.finishWithResult
 import au.com.outware.neanderthal.util.extensions.inflateMenu
 import kotlinx.android.synthetic.main.neanderthal_activity_edit_variant.*
 import kotlinx.android.synthetic.main.neanderthal_item_variant_name.view.*
-import javax.inject.Inject
 
 /**
  * @author timmutton
  */
 class EditVariantActivity : AppCompatActivity(), EditVariantPresenter.ViewSurface {
-    @Inject
-    lateinit internal var presenter: EditVariantPresenter
+    lateinit private var presenter: EditVariantPresenter
 
     private var dialog: AlertDialog? = null
 
@@ -33,12 +28,7 @@ class EditVariantActivity : AppCompatActivity(), EditVariantPresenter.ViewSurfac
 
         val adapter = PropertyAdapter()
 
-        DaggerEditVariantComponent.builder()
-            .neanderthalComponent(Neanderthal.neanderthalComponent)
-            .editVariantModule(EditVariantModule(this, adapter))
-            .build()
-            .inject(this)
-
+        presenter = EditVariantPresenter(this, adapter)
         presenter.onCreate(intent.extras)
 
         supportActionBar?.setDisplayShowHomeEnabled(true)
