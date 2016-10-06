@@ -1,4 +1,4 @@
-package au.com.outware.neanderthal.domain.factory
+package au.com.outware.neanderthal.data.model
 
 /**
  * @author timmutton

@@ -9,6 +9,8 @@
 
 -dontwarn kotlin.**
 
+-keepattributes SourceFile,LineNumberTable
+
 # remove null checks at run: probably dangerous, even with kotlin
 -assumenosideeffects class kotlin.jvm.internal.Intrinsics {
     static void checkParameterIsNotNull(java.lang.Object, java.lang.String);

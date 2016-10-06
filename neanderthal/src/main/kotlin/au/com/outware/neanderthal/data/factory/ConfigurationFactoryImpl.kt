@@ -1,6 +1,6 @@
 package au.com.outware.neanderthal.data.factory
 
-import au.com.outware.neanderthal.domain.factory.ConfigurationFactory
+import au.com.outware.neanderthal.data.model.ConfigurationFactory
 
 /**
  * @author timmutton

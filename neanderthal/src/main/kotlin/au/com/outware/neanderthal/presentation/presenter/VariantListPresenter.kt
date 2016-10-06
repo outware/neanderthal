@@ -1,16 +1,14 @@
 package au.com.outware.neanderthal.presentation.presenter
 
 import android.os.Bundle
+import au.com.outware.neanderthal.Neanderthal
 import au.com.outware.neanderthal.data.model.Variant
-import au.com.outware.neanderthal.domain.interactor.VariantInteractor
 import java.util.*
-import javax.inject.Inject
 
 /**
  * @author timmutton
  */
-class VariantListPresenter @Inject constructor(val variantInteractor: VariantInteractor,
-                                               val view: ViewSurface,
+class VariantListPresenter constructor(val view: ViewSurface,
                                                val adapter: AdapterSurface): Presenter {
     companion object {
         val CURRENT_POSITION_KEY = "current_position"
@@ -18,8 +16,8 @@ class VariantListPresenter @Inject constructor(val variantInteractor: VariantInt
         val VARIANTS_KEY = "variants"
     }
 
-    lateinit private var currentVariantName: String
-    lateinit private var variants: ArrayList<String>
+    private var variants: ArrayList<String> = ArrayList<String>()
+    private var currentVariantName: String? = null
     private var currentPosition = 0
 
     private var deletedVariant: Variant? = null
@@ -29,18 +27,18 @@ class VariantListPresenter @Inject constructor(val variantInteractor: VariantInt
         if(parameters != null) {
             currentPosition = parameters.getInt(CURRENT_POSITION_KEY)
             currentVariantName = parameters.getString(CURRENT_VARIANT_NAME_KEY)
-            variants = parameters.getStringArrayList(VARIANTS_KEY)
-            if(variants.size > 0) {
+            variants.addAll(parameters.getStringArrayList(VARIANTS_KEY) ?: emptyList<String>())
+            if(variants.isNotEmpty()) {
                 variants.sort()
                 adapter.setCurrentPosition(currentPosition)
             }
         } else {
-            variants = ArrayList<String>(variantInteractor.getVariantNames())
-            if(variants.size > 0) {
-                currentVariantName = variantInteractor.getCurrentVariant()?.name ?: variants.first()
-                currentPosition = variants.indexOf(currentVariantName)
+            variants.addAll(getVariantNames())
+            if(variants.isNotEmpty()) {
+                currentVariantName = Neanderthal.variantRepository?.getCurrentVariant()?.name ?: variants.first()
+                currentPosition = variants.indexOf(currentVariantName!!)
                 variants.sort()
-                adapter.setCurrentPosition(variants.indexOf(currentVariantName))
+                adapter.setCurrentPosition(variants.indexOf(currentVariantName!!))
             }
         }
 
@@ -48,10 +46,10 @@ class VariantListPresenter @Inject constructor(val variantInteractor: VariantInt
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
-        if(variants.size > 0) {
+        if(variants.isNotEmpty()) {
             outState.putInt(CURRENT_POSITION_KEY, currentPosition)
             outState.putString(CURRENT_VARIANT_NAME_KEY, currentVariantName)
-            outState.putStringArrayList(VARIANTS_KEY, variants)
+            outState.putStringArrayList(VARIANTS_KEY, ArrayList<String>(variants))
         }
     }
 
@@ -61,7 +59,7 @@ class VariantListPresenter @Inject constructor(val variantInteractor: VariantInt
     // endregion
 
     fun onItemSelected(name: String, position: Int) {
-        variantInteractor.setCurrentVariant(name)
+        Neanderthal.variantRepository?.setCurrentVariant(name)
         currentVariantName = name
         currentPosition = position
         adapter.setCurrentPosition(position)
@@ -72,7 +70,7 @@ class VariantListPresenter @Inject constructor(val variantInteractor: VariantInt
     }
 
     fun onEditClicked() {
-        view.goToEditVariant(currentVariantName)
+        view.goToEditVariant(currentVariantName!!)
     }
 
     fun onDeleteClicked() {
@@ -94,14 +92,14 @@ class VariantListPresenter @Inject constructor(val variantInteractor: VariantInt
 
     fun onResetConfirmation(confirmed: Boolean){
         if(confirmed) {
-            variantInteractor.resetVariants()
+            Neanderthal.variantRepository?.resetVariants()
             variants.clear()
 
-            variants.addAll(variantInteractor.getVariantNames())
+            variants.addAll(getVariantNames())
 
             variants.sort()
             adapter.add(variants)
-            currentVariantName = variantInteractor.getCurrentVariant()?.name ?: variants.first()
+            currentVariantName = Neanderthal.variantRepository?.getCurrentVariant()?.name ?: variants.firstOrNull()
             currentPosition = variants.indexOf(currentVariantName)
             adapter.setCurrentPosition(currentPosition)
             view.notifyReset()
@@ -113,17 +111,17 @@ class VariantListPresenter @Inject constructor(val variantInteractor: VariantInt
 
     fun onDeleteConfirmation(confirmed: Boolean) {
         if (confirmed) {
-            deletedVariant = variantInteractor.getCurrentVariant()
+            deletedVariant = Neanderthal.variantRepository?.getCurrentVariant()
 
             val oldPosition = currentPosition
-            variantInteractor.deleteVariant(currentVariantName)
-            variants.remove(currentVariantName)
+            Neanderthal.variantRepository?.removeVariant(currentVariantName!!)
+            variants.remove(currentVariantName!!)
 
-            if(variants.size > 0) {
+            if(variants.isNotEmpty()) {
                 // Set new current variant
                 currentPosition = Math.max(--currentPosition, 0)
                 currentVariantName = variants[currentPosition]
-                variantInteractor.setCurrentVariant(currentVariantName)
+                Neanderthal.variantRepository?.setCurrentVariant(currentVariantName!!)
                 adapter.setCurrentPosition(currentPosition)
             }else{
                 currentPosition = 0
@@ -141,9 +139,16 @@ class VariantListPresenter @Inject constructor(val variantInteractor: VariantInt
 
     fun onUndoClicked() {
         deletedVariant?.let {
-            variantInteractor.saveVariant(deletedVariant!!)
-            val name = deletedVariant!!.name!!
-            variants.add(name)
+            val name = deletedVariant!!.name
+
+            if(deletedVariant!!.name == null) {
+                throw IllegalArgumentException("Added or updated variant must have a name")
+            }
+
+            Neanderthal.variantRepository?.addVariant(deletedVariant!!)
+            Neanderthal.variantRepository?.setCurrentVariant(name!!)
+
+            variants.add(name!!)
             adapter.add(name)
         }
     }
@@ -154,6 +159,13 @@ class VariantListPresenter @Inject constructor(val variantInteractor: VariantInt
 
     fun updateEditingEnabled() {
         view.setEditingEnabled(variants.size != 0)
+    }
+
+    fun getVariantNames(): List<String> {
+        Neanderthal.variantRepository?.let {
+            return it.getVariants().map { variant -> variant.name!! }.toList()
+        }
+        return emptyList<String>()
     }
 
     interface ViewSurface {
