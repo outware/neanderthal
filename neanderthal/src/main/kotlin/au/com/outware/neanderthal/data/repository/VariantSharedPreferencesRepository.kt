@@ -35,6 +35,11 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
         sharedPreferences = context.getSharedPreferences("$formattedPackageName$SHARED_PREFERENCES_FILE_NAME", Context.MODE_PRIVATE)
         editor = sharedPreferences.edit()
 
+        if(!baseVariants.containsKey(defaultVariant)) {
+            editor.clear();
+            throw RuntimeException("You must declare a valid default variant");
+        }
+
         val structure = klass.declaredFields
                 .filter { field -> !Modifier.isPrivate(field.modifiers) && !Modifier.isTransient(field.modifiers) }
                 .map { field -> field.name }
@@ -55,11 +60,9 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
 
             editor.putStringSet(VARIANT_STRUCTURE, structure)
 
-            // Set the default/current variant to the one supplied, or the first if the supplied default doesnt exist
-            val currentVariant = if (baseVariants.containsKey(defaultVariant)) defaultVariant else baseVariants.keys.first()
-            editor.putString(CURRENT_VARIANT, currentVariant)
-            editor.putString(DEFAULT_VARIANT, currentVariant)
-            
+            editor.putString(CURRENT_VARIANT, defaultVariant)
+            editor.putString(DEFAULT_VARIANT, defaultVariant)
+
             editor.apply()
         }
     }
