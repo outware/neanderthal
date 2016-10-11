@@ -52,9 +52,14 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
             for (variant in baseVariants) {
                 editor.putString(variant.key, gson.toJson(variant.value))
             }
+
             editor.putStringSet(VARIANT_STRUCTURE, structure)
-            editor.putString(CURRENT_VARIANT, defaultVariant)
-            editor.putString(DEFAULT_VARIANT, defaultVariant)
+
+            // Set the default/current variant to the one supplied, or the first if the supplied default doesnt exist
+            val currentVariant = if (baseVariants.containsKey(defaultVariant)) defaultVariant else baseVariants.keys.first()
+            editor.putString(CURRENT_VARIANT, currentVariant)
+            editor.putString(DEFAULT_VARIANT, currentVariant)
+            
             editor.apply()
         }
     }
