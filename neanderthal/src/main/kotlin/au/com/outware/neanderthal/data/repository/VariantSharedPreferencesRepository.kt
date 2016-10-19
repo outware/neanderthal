@@ -36,8 +36,8 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
         editor = sharedPreferences.edit()
 
         if(!baseVariants.containsKey(defaultVariant)) {
-            editor.clear();
-            throw RuntimeException("You must declare a valid default variant");
+            editor.clear()
+            throw IllegalArgumentException("You must declare a valid default variant")
         }
 
         val structure = klass.declaredFields
