@@ -36,7 +36,13 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         adapter = VariantAdapter { name, position -> presenter.onItemSelected(name, position) }
 
         presenter = VariantListPresenter(this, adapter)
-        presenter.onCreate(null)
+
+        val args = intent.extras
+        savedInstanceState?.let {
+            args.putAll(it)
+        }
+        args.putAll(savedInstanceState)
+        presenter.onCreate(args)
 
         variantList.layoutManager = LinearLayoutManager(this)
         variantList.addItemDecoration(DividerItemDecoration(this, android.R.drawable.divider_horizontal_bright))

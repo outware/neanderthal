@@ -29,7 +29,12 @@ class EditVariantActivity : AppCompatActivity(), EditVariantPresenter.ViewSurfac
         val adapter = PropertyAdapter()
 
         presenter = EditVariantPresenter(this, adapter)
-        presenter.onCreate(intent.extras)
+
+        val args = intent.extras
+        savedInstanceState?.let {
+            args.putAll(it)
+        }
+        presenter.onCreate(args)
 
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

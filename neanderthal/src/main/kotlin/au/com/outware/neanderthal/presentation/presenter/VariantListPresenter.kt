@@ -10,12 +10,6 @@ import java.util.*
  */
 class VariantListPresenter constructor(val view: ViewSurface,
                                                val adapter: AdapterSurface): Presenter {
-    companion object {
-        val CURRENT_POSITION_KEY = "current_position"
-        val CURRENT_VARIANT_NAME_KEY = "current_variant_name"
-        val VARIANTS_KEY = "variants"
-    }
-
     private var variants: ArrayList<String> = ArrayList<String>()
     private var currentVariantName: String? = null
     private var currentPosition = 0
