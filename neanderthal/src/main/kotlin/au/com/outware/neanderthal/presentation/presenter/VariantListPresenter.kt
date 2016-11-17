@@ -10,12 +10,6 @@ import java.util.*
  */
 class VariantListPresenter constructor(val view: ViewSurface,
                                                val adapter: AdapterSurface): Presenter {
-    companion object {
-        val CURRENT_POSITION_KEY = "current_position"
-        val CURRENT_VARIANT_NAME_KEY = "current_variant_name"
-        val VARIANTS_KEY = "variants"
-    }
-
     private var variants: ArrayList<String> = ArrayList<String>()
     private var currentVariantName: String? = null
     private var currentPosition = 0
@@ -24,33 +18,15 @@ class VariantListPresenter constructor(val view: ViewSurface,
 
     // region Lifecycle
     override fun onCreate(parameters: Bundle?) {
-        if(parameters != null) {
-            currentPosition = parameters.getInt(CURRENT_POSITION_KEY)
-            currentVariantName = parameters.getString(CURRENT_VARIANT_NAME_KEY)
-            variants.addAll(parameters.getStringArrayList(VARIANTS_KEY) ?: emptyList<String>())
-            if(variants.isNotEmpty()) {
-                variants.sort()
-                adapter.setCurrentPosition(currentPosition)
-            }
-        } else {
-            variants.addAll(getVariantNames())
-            if(variants.isNotEmpty()) {
-                currentVariantName = Neanderthal.variantRepository?.getCurrentVariant()?.name ?: variants.first()
-                currentPosition = variants.indexOf(currentVariantName!!)
-                variants.sort()
-                adapter.setCurrentPosition(variants.indexOf(currentVariantName!!))
-            }
+        variants.addAll(getVariantNames())
+        if(variants.isNotEmpty()) {
+            currentVariantName = Neanderthal.variantRepository?.getCurrentVariant()?.name ?: variants.first()
+            currentPosition = variants.indexOf(currentVariantName!!)
+            variants.sort()
+            adapter.setCurrentPosition(variants.indexOf(currentVariantName!!))
         }
 
         adapter.add(variants)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        if(variants.isNotEmpty()) {
-            outState.putInt(CURRENT_POSITION_KEY, currentPosition)
-            outState.putString(CURRENT_VARIANT_NAME_KEY, currentVariantName)
-            outState.putStringArrayList(VARIANTS_KEY, ArrayList<String>(variants))
-        }
     }
 
     override fun onPause() {
