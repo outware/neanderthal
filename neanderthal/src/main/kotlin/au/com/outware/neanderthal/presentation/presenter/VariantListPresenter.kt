@@ -24,33 +24,15 @@ class VariantListPresenter constructor(val view: ViewSurface,
 
     // region Lifecycle
     override fun onCreate(parameters: Bundle?) {
-        if(parameters != null) {
-            currentPosition = parameters.getInt(CURRENT_POSITION_KEY)
-            currentVariantName = parameters.getString(CURRENT_VARIANT_NAME_KEY)
-            variants.addAll(parameters.getStringArrayList(VARIANTS_KEY) ?: emptyList<String>())
-            if(variants.isNotEmpty()) {
-                variants.sort()
-                adapter.setCurrentPosition(currentPosition)
-            }
-        } else {
-            variants.addAll(getVariantNames())
-            if(variants.isNotEmpty()) {
-                currentVariantName = Neanderthal.variantRepository?.getCurrentVariant()?.name ?: variants.first()
-                currentPosition = variants.indexOf(currentVariantName!!)
-                variants.sort()
-                adapter.setCurrentPosition(variants.indexOf(currentVariantName!!))
-            }
+        variants.addAll(getVariantNames())
+        if(variants.isNotEmpty()) {
+            currentVariantName = Neanderthal.variantRepository?.getCurrentVariant()?.name ?: variants.first()
+            currentPosition = variants.indexOf(currentVariantName!!)
+            variants.sort()
+            adapter.setCurrentPosition(variants.indexOf(currentVariantName!!))
         }
 
         adapter.add(variants)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        if(variants.isNotEmpty()) {
-            outState.putInt(CURRENT_POSITION_KEY, currentPosition)
-            outState.putString(CURRENT_VARIANT_NAME_KEY, currentVariantName)
-            outState.putStringArrayList(VARIANTS_KEY, ArrayList<String>(variants))
-        }
     }
 
     override fun onPause() {
