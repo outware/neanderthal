@@ -41,7 +41,6 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         savedInstanceState?.let {
             args.putAll(it)
         }
-        args.putAll(savedInstanceState)
         presenter.onCreate(args)
 
         variantList.layoutManager = LinearLayoutManager(this)
