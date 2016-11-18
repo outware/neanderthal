@@ -31,10 +31,10 @@ class BooleanPropertyAdapterDelegate(val variant: Variant,
     override fun bindViewHolder(items: List<Field>, position: Int, holder: RecyclerView.ViewHolder) = with(holder.itemView) {
         val configurationProperty = items[position - if (setVariantName) 1 else 0]
         checkboxKey.text = PropertyAdapter.getPropertyName(configurationProperty)
-        checkboxValue.isChecked = configurationProperty.getBoolean(variant.configuration)
         checkboxValue.setOnCheckedChangeListener {
             buttonView, isChecked ->
                 configurationProperty.setBoolean(variant.configuration, isChecked)
         }
+        checkboxValue.isChecked = configurationProperty.getBoolean(variant.configuration)
     }
 }

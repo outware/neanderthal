@@ -1,7 +1,10 @@
 package au.com.outware.neanderthal.presentation.view.activity
 
 import android.app.Activity
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -10,21 +13,17 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
-import au.com.outware.neanderthal.Neanderthal
 import au.com.outware.neanderthal.R
-import au.com.outware.neanderthal.dagger.component.DaggerVariantListComponent
-import au.com.outware.neanderthal.dagger.module.VariantListModule
 import au.com.outware.neanderthal.presentation.adapter.VariantAdapter
 import au.com.outware.neanderthal.presentation.presenter.EditVariantPresenter
 import au.com.outware.neanderthal.presentation.presenter.VariantListPresenter
 import au.com.outware.neanderthal.util.DividerItemDecoration
 import au.com.outware.neanderthal.util.extensions.*
 import kotlinx.android.synthetic.main.neanderthal_activity_variant_list.*
-import javax.inject.Inject
+import java.lang.System.exit
 
 class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurface {
-    @Inject
-    lateinit internal var presenter: VariantListPresenter
+    lateinit private var presenter: VariantListPresenter
 
     private lateinit var adapter: VariantAdapter
     private var dialog: AlertDialog? = null
@@ -36,13 +35,14 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
 
         adapter = VariantAdapter { name, position -> presenter.onItemSelected(name, position) }
 
-        DaggerVariantListComponent.builder()
-                .neanderthalComponent(Neanderthal.neanderthalComponent)
-                .variantListModule(VariantListModule(this, adapter))
-                .build()
-                .inject(this)
+        presenter = VariantListPresenter(this, adapter)
 
-        presenter.onCreate(savedInstanceState)
+        val args = intent.extras
+        savedInstanceState?.let {
+            args.putAll(it)
+        }
+        args.putAll(savedInstanceState)
+        presenter.onCreate(args)
 
         variantList.layoutManager = LinearLayoutManager(this)
         variantList.addItemDecoration(DividerItemDecoration(this, android.R.drawable.divider_horizontal_bright))
@@ -78,11 +78,6 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         presenter.onPause()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        presenter.onSaveInstanceState(outState)
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -100,12 +95,10 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
     }
 
     override fun goToMainApplication() {
-        val defaultLaunchIntent = packageManager.getLaunchIntentForPackage(packageName)
+        var launchIntent = packageManager.getLaunchIntentForPackage(packageName)
 
-        // If neanderthal is not the default launch intent
-        if(!defaultLaunchIntent.component.className.equals(localClassName)) {
-            startActivity(defaultLaunchIntent)
-        } else {
+        // If neanderthal is the default launch intent
+        if(launchIntent.component.className.equals(localClassName)) {
             // Filter for main intents for this package
             val filterIntent = Intent(Intent.ACTION_MAIN)
             filterIntent.setPackage(packageName)
@@ -116,11 +109,14 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
                     .first()
 
             // Launch the activity
-            val intent = Intent()
-            intent.component = ComponentName(this, resolveInfo.activityInfo.name)
-            startActivity(intent)
+            launchIntent = Intent()
+            launchIntent.component = ComponentName(this, resolveInfo.activityInfo.name)
         }
 
+        val pendingIntent = PendingIntent.getActivity(this, 0, launchIntent, Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        val manager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        manager.set(AlarmManager.RTC, System.currentTimeMillis(), pendingIntent)
+        exit(0)
     }
 
     override fun createDeleteConfirmation() {

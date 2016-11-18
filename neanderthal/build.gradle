@@ -7,9 +7,8 @@ apply plugin: 'com.getkeepsafe.dexcount'
 
 buildscript {
     ext {
-        daggerVersion = '2.4'
-        kotlinVersion = '1.0.3'
-        supportLibraryVersion = '23.3.0'
+        kotlinVersion = '1.0.4'
+        supportLibraryVersion = '24.2.1'
     }
 
     repositories {
@@ -21,7 +20,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlinVersion"
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.3'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
     }
 }
 
@@ -90,7 +89,7 @@ task javadoc(type: Javadoc) {
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
+task javadocJar(type: Jar, dependsOn: 'javadoc') {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
@@ -127,26 +126,15 @@ bintray {
     }
 }
 
-bintrayUpload.dependsOn install
-install.dependsOn assembleRelease
+bintrayUpload.dependsOn "install"
+install.dependsOn "assembleRelease"
 
 dependencies {
     compile 'com.google.code.gson:gson:2.4',
-            "com.google.dagger:dagger:$daggerVersion",
             // Support
             "com.android.support:appcompat-v7:$supportLibraryVersion",
             "com.android.support:design:$supportLibraryVersion",
             "com.android.support:recyclerview-v7:$supportLibraryVersion",
             // Kotlin
             "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
-
-    // Dagger 2
-    kapt "com.google.dagger:dagger-compiler:$daggerVersion"
-    provided 'org.glassfish:javax.annotation:10.0-b28'
-
-    testCompile "com.nhaarman:mockito-kotlin:0.3.1"
-    testCompile 'org.hamcrest:hamcrest-all:1.3'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.robolectric:robolectric:3.0'
-    testCompile 'org.mockito:mockito-all:1.10.19'
 }

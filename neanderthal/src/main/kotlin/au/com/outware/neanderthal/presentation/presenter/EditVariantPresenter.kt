@@ -1,37 +1,26 @@
 package au.com.outware.neanderthal.presentation.presenter
 
 import android.os.Bundle
+import au.com.outware.neanderthal.Neanderthal
 import au.com.outware.neanderthal.data.model.Variant
-import au.com.outware.neanderthal.domain.factory.ConfigurationFactory
-import au.com.outware.neanderthal.domain.interactor.VariantInteractor
 import au.com.outware.neanderthal.util.extensions.serializableFields
-import javax.inject.Inject
 
 /**
  * @author timmutton
  */
-class EditVariantPresenter @Inject constructor(): Presenter {
-    @Inject
-    lateinit internal var variantInteractor: VariantInteractor
-    @Inject
-    lateinit internal var configurationRepository: ConfigurationFactory
-
-    @Inject
-    lateinit internal var view: ViewSurface
-    @Inject
-    lateinit internal var adapter: AdapterSurface
-
-    lateinit internal var variant: Variant
-    internal var originalConfiguration: Any? = null
-    internal var newVariant: Boolean = false;
+class EditVariantPresenter constructor(val view: ViewSurface,
+                                       val adapter: AdapterSurface): Presenter {
+    private lateinit var variant: Variant
+    private var originalConfiguration: Any? = null
+    private var newVariant: Boolean = false;
 
     // region Lifecycle
     override fun onCreate(parameters: Bundle?) {
-        var name: String? = parameters?.getString(ViewSurface.EXTRA_NAME)
+        val name: String? = parameters?.getString(ViewSurface.EXTRA_NAME)
         newVariant = name.isNullOrEmpty()
-        variant = variantInteractor.getVariant(name)
+        variant = getVariant(name)
         if(!newVariant) {
-            originalConfiguration = configurationRepository.createConfiguration()
+            originalConfiguration = Neanderthal.configurationRepository!!.createConfiguration()
             // Such a hack. Copies the values of a configuration instead of creating a reference to the configuration
             for(field in variant.configuration!!.javaClass.serializableFields) {
                 field.set(originalConfiguration!!, field.get(variant.configuration!!))
@@ -45,7 +34,12 @@ class EditVariantPresenter @Inject constructor(): Presenter {
         if(newVariant && variant.name.isNullOrEmpty()) {
             view.showNameError()
         } else {
-            variantInteractor.saveVariant(variant)
+            if(variant.name == null) {
+                throw IllegalArgumentException("Added or updated variant must have a name")
+            }
+
+            Neanderthal.variantRepository?.addVariant(variant)
+            Neanderthal.variantRepository?.setCurrentVariant(variant.name!!)
             view.goToVariantList(true, variant.name!!)
         }
     }
@@ -77,6 +71,21 @@ class EditVariantPresenter @Inject constructor(): Presenter {
         }
 
         view.dismissCancelConfirmation()
+    }
+
+    fun getVariant(name: String?): Variant {
+        var variant: Variant?
+
+        if(name == null) {
+            variant = Variant(null, Neanderthal.configurationRepository!!.createConfiguration())
+        } else {
+            variant = Neanderthal.variantRepository?.getVariant(name)
+            if(variant == null) {
+                variant = Variant(null, Neanderthal.configurationRepository!!.createConfiguration())
+            }
+        }
+
+        return variant
     }
 
     interface ViewSurface {
