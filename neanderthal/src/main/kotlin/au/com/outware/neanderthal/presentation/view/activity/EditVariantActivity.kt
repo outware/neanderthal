@@ -30,7 +30,10 @@ class EditVariantActivity : AppCompatActivity(), EditVariantPresenter.ViewSurfac
 
         presenter = EditVariantPresenter(this, adapter)
 
-        val args = intent.extras
+        val args = Bundle()
+        intent?.extras?.let {
+            args.putAll(intent.extras)
+        }
         savedInstanceState?.let {
             args.putAll(it)
         }

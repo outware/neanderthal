@@ -37,7 +37,10 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
 
         presenter = VariantListPresenter(this, adapter)
 
-        val args = intent.extras
+        val args = Bundle()
+        intent?.extras?.let {
+            args.putAll(intent.extras)
+        }
         savedInstanceState?.let {
             args.putAll(it)
         }
