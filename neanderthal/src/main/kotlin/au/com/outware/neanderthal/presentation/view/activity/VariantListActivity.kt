@@ -112,11 +112,11 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
             launchIntent = Intent()
             launchIntent.component = ComponentName(this, resolveInfo.activityInfo.name)
         }
-
-        val pendingIntent = PendingIntent.getActivity(this, 0, launchIntent, Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val manager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        manager.set(AlarmManager.RTC, System.currentTimeMillis(), pendingIntent)
-        exit(0)
+        // Updating the logic to restart the app as the prior got depricated with Android Q
+        launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // In case we are called with non-Activity context.
+        startActivity(launchIntent);
+        finish();
+        Runtime.getRuntime().exit(0);
     }
 
     override fun createResetConfirmation() {
