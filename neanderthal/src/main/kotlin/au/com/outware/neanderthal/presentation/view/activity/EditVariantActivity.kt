@@ -18,8 +18,15 @@ import kotlinx.android.synthetic.main.neanderthal_item_variant_name.view.*
  * @author timmutton
  */
 class EditVariantActivity : AppCompatActivity(), EditVariantPresenter.ViewSurface {
+    companion object {
+        val USER_ACTION_KEY = "user_action"
+        val USER_ACTION_VALUE_ADD = "add"
+        val USER_ACTION_VALUE_DELETE = "delete"
+    }
+
     lateinit private var presenter: EditVariantPresenter
 
+    private var allowDeletion: Boolean = false
     private var dialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +37,10 @@ class EditVariantActivity : AppCompatActivity(), EditVariantPresenter.ViewSurfac
 
         presenter = EditVariantPresenter(this, adapter)
 
-        val args = intent.extras
+        val args = Bundle()
+        intent?.extras?.let {
+            args.putAll(intent.extras)
+        }
         savedInstanceState?.let {
             args.putAll(it)
         }
@@ -51,9 +61,18 @@ class EditVariantActivity : AppCompatActivity(), EditVariantPresenter.ViewSurfac
 
     override fun onCreateOptionsMenu(menu: Menu?) = inflateMenu(R.menu.neanderthal_menu_edit_variant, menu)
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu?.let {
+            menu.findItem(R.id.neanderthal_menu_item_delete).isVisible = allowDeletion
+        }
+
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
             android.R.id.home -> presenter.onBackClicked()
+            R.id.neanderthal_menu_item_delete -> presenter.onDeleteClicked()
             R.id.menu_item_done -> presenter.onDone()
         }
 
@@ -73,9 +92,11 @@ class EditVariantActivity : AppCompatActivity(), EditVariantPresenter.ViewSurfac
     }
 
     override fun showNameError() {
-        val nameValueLayout = propertyList.getChildAt(0).nameValueLayout
-        nameValueLayout.isErrorEnabled = true
-        nameValueLayout.error = getString(R.string.neanderthal_name_required)
+        dialog = AlertDialog.Builder(this)
+                .setTitle(R.string.neanderthal_name_required)
+                .setMessage(R.string.neanderthal_name_required_message)
+                .setPositiveButton(R.string.neanderthal_positive_button) { dialog, which -> presenter.onCancelConfirmation(true) }
+                .show()
     }
 
     override fun createCancelConfirmation() {
@@ -89,5 +110,24 @@ class EditVariantActivity : AppCompatActivity(), EditVariantPresenter.ViewSurfac
 
     override fun dismissCancelConfirmation() {
         dialog?.dismiss()
+    }
+
+    override fun createDeleteConfirmation() {
+        dialog = AlertDialog.Builder(this)
+                .setTitle(R.string.neanderthal_delete_title)
+                .setMessage(R.string.neanderthal_delete_message)
+                .setPositiveButton(R.string.neanderthal_delete_positive) { dialog, which -> presenter.onDeleteConfirmation(true) }
+                .setNegativeButton(R.string.neanderthal_cancel) { dialog, which -> presenter.onDeleteConfirmation(false) }
+                .show()
+    }
+
+    override fun dismissDeleteConfirmation() {
+        dialog?.dismiss()
+        this.dialog = null
+    }
+
+    override fun setDeleteEnabled(){
+        allowDeletion = true
+        invalidateOptionsMenu()
     }
 }

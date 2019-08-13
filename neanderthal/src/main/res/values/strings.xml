@@ -26,6 +26,10 @@
     <string name="neanderthal_title_edit_variant">Edit Variant</string>
     <string name="neanderthal_title_add_variant">Add Variant</string>
     <string name="neanderthal_name_required">Required</string>
+    <string name="neanderthal_name_required_message">Name is required</string>
+    <string name="neanderthal_positive_button">OK</string>
+
     <string name="neanderthal_done">Done</string>
     <string name="neanderthal_reset_default_values">Reset to default</string>
+
 </resources>

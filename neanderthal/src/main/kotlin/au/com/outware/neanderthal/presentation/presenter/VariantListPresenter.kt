@@ -14,8 +14,6 @@ class VariantListPresenter constructor(val view: ViewSurface,
     private var currentVariantName: String? = null
     private var currentPosition = 0
 
-    private var deletedVariant: Variant? = null
-
     // region Lifecycle
     override fun onCreate(parameters: Bundle?) {
         variants.addAll(getVariantNames())
@@ -27,10 +25,6 @@ class VariantListPresenter constructor(val view: ViewSurface,
         }
 
         adapter.add(variants)
-    }
-
-    override fun onPause() {
-        view.dismissDeleteConfirmation()
     }
     // endregion
 
@@ -47,10 +41,6 @@ class VariantListPresenter constructor(val view: ViewSurface,
 
     fun onEditClicked() {
         view.goToEditVariant(currentVariantName!!)
-    }
-
-    fun onDeleteClicked() {
-        view.createDeleteConfirmation()
     }
 
     fun onAddVariant(name: String) {
@@ -85,50 +75,6 @@ class VariantListPresenter constructor(val view: ViewSurface,
         updateEditingEnabled()
     }
 
-    fun onDeleteConfirmation(confirmed: Boolean) {
-        if (confirmed) {
-            deletedVariant = Neanderthal.variantRepository?.getCurrentVariant()
-
-            val oldPosition = currentPosition
-            Neanderthal.variantRepository?.removeVariant(currentVariantName!!)
-            variants.remove(currentVariantName!!)
-
-            if(variants.isNotEmpty()) {
-                // Set new current variant
-                currentPosition = Math.max(--currentPosition, 0)
-                currentVariantName = variants[currentPosition]
-                Neanderthal.variantRepository?.setCurrentVariant(currentVariantName!!)
-                adapter.setCurrentPosition(currentPosition)
-            }else{
-                currentPosition = 0
-                currentVariantName = ""
-            }
-
-            // Notify the views
-            adapter.remove(oldPosition)
-            view.notifyDeleted()
-        }
-
-        view.dismissDeleteConfirmation()
-        updateEditingEnabled()
-    }
-
-    fun onUndoClicked() {
-        deletedVariant?.let {
-            val name = deletedVariant!!.name
-
-            if(deletedVariant!!.name == null) {
-                throw IllegalArgumentException("Added or updated variant must have a name")
-            }
-
-            Neanderthal.variantRepository?.addVariant(deletedVariant!!)
-            Neanderthal.variantRepository?.setCurrentVariant(name!!)
-
-            variants.add(name!!)
-            adapter.add(name)
-        }
-    }
-
     fun onLaunchClicked() {
         view.goToMainApplication()
     }
@@ -145,8 +91,6 @@ class VariantListPresenter constructor(val view: ViewSurface,
     }
 
     interface ViewSurface {
-        fun createDeleteConfirmation()
-        fun dismissDeleteConfirmation()
         fun notifyDeleted()
         fun createResetConfirmation()
         fun dismissResetConfirmation()
@@ -154,7 +98,7 @@ class VariantListPresenter constructor(val view: ViewSurface,
         fun goToAddVariant()
         fun goToEditVariant(name: String)
         fun goToMainApplication()
-        fun setEditingEnabled(enabled : Boolean)
+        fun setEditingEnabled(enabled: Boolean)
     }
 
     interface AdapterSurface {

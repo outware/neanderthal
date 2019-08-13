@@ -29,10 +29,6 @@ class NamePropertyAdapterDelegate(val variant: Variant,
     override fun bindViewHolder(items: List<Field>, position: Int, holder: RecyclerView.ViewHolder) {
         holder.itemView.nameValue.setOnTextChangedListener { text ->
             variant.name = text.toString()
-
-            if(text.length > 0) {
-                holder.itemView.nameValueLayout.isErrorEnabled = false
-            }
         }
     }
 }
