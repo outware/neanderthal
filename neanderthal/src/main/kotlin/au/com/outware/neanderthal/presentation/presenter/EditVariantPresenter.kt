@@ -25,9 +25,15 @@ class EditVariantPresenter constructor(val view: ViewSurface,
             for(field in variant.configuration!!.javaClass.serializableFields) {
                 field.set(originalConfiguration!!, field.get(variant.configuration!!))
             }
+            view.setDeleteEnabled()
         }
         adapter.setItem(variant)
     }
+
+    override fun onPause() {
+        view.dismissDeleteConfirmation()
+    }
+
     // endregion
 
     fun onDone() {
@@ -42,6 +48,10 @@ class EditVariantPresenter constructor(val view: ViewSurface,
             Neanderthal.variantRepository?.setCurrentVariant(variant.name!!)
             view.goToVariantList(true, variant.name!!)
         }
+    }
+
+    fun onDeleteClicked() {
+        view.createDeleteConfirmation()
     }
 
     fun onBackClicked() {
@@ -59,10 +69,13 @@ class EditVariantPresenter constructor(val view: ViewSurface,
         }
     }
 
-    private fun hasChanges(): Boolean {
-        return variant.configuration!!.javaClass.serializableFields.any { field ->
-            !field.get(variant.configuration).equals(field.get(originalConfiguration))
+    fun onDeleteConfirmation(confirmed: Boolean) {
+        if (confirmed) {
+            Neanderthal.variantRepository?.removeVariant(variant.name!!)
+//            view.notifyDeleted()
         }
+
+        view.dismissDeleteConfirmation()
     }
 
     fun onCancelConfirmation(confirmed: Boolean) {
@@ -73,7 +86,7 @@ class EditVariantPresenter constructor(val view: ViewSurface,
         view.dismissCancelConfirmation()
     }
 
-    fun getVariant(name: String?): Variant {
+    private fun getVariant(name: String?): Variant {
         var variant: Variant?
 
         if(name == null) {
@@ -88,6 +101,12 @@ class EditVariantPresenter constructor(val view: ViewSurface,
         return variant
     }
 
+    private fun hasChanges(): Boolean {
+        return variant.configuration!!.javaClass.serializableFields.any { field ->
+            !field.get(variant.configuration).equals(field.get(originalConfiguration))
+        }
+    }
+
     interface ViewSurface {
         companion object {
             val EXTRA_NAME = "extra_name"
@@ -95,8 +114,11 @@ class EditVariantPresenter constructor(val view: ViewSurface,
         }
 
         fun goToVariantList(changesSaved: Boolean, name: String)
+        fun setDeleteEnabled()
         fun createCancelConfirmation()
         fun dismissCancelConfirmation()
+        fun createDeleteConfirmation()
+        fun dismissDeleteConfirmation()
         fun showNameError()
     }
 
