@@ -26,10 +26,10 @@ class DividerItemDecoration : RecyclerView.ItemDecoration {
      * Custom divider will be used
      */
     constructor(context: Context, resId: Int) {
-        divider = ContextCompat.getDrawable(context, resId)
+        divider = ContextCompat.getDrawable(context, resId)!!
     }
 
-    override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State?) {
+    override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         val left = parent.paddingLeft
         val right = parent.width - parent.paddingRight
 
@@ -46,6 +46,7 @@ class DividerItemDecoration : RecyclerView.ItemDecoration {
             divider.draw(c)
         }
     }
+
 
     companion object {
         private val ATTRS = intArrayOf(android.R.attr.listDivider)
