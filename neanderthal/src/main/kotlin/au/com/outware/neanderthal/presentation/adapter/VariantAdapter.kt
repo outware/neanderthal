@@ -11,25 +11,26 @@ import java.util.*
 /**
  * @author timmutton
  */
-class VariantAdapter(var clickListener: (String, Int) -> Unit) :
+ class VariantAdapter(var clickListener: (String, Int) -> Unit) :
         RecyclerView.Adapter<VariantAdapter.ViewHolder>(), VariantListPresenter.AdapterSurface {
-    val variants: ArrayList<String> = ArrayList()
-    var checkedIndex = 0
 
-    override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder? {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater
-                .from(parent?.context)
-                .inflate(android.R.layout.simple_list_item_single_choice, parent, false)
+            .from(parent?.context)
+            .inflate(android.R.layout.simple_list_item_single_choice, parent, false)
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(viewHolder: ViewHolder?, position: Int) {
+    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         viewHolder?.checkedTextView?.text = variants[position]
         viewHolder?.checkedTextView?.isChecked = (position == checkedIndex)
         viewHolder?.checkedTextView?.setOnClickListener({
             clickListener(variants[position], position)
         })
     }
+
+    val variants: ArrayList<String> = ArrayList()
+    var checkedIndex = 0
 
     override fun getItemCount(): Int {
         return variants.size
