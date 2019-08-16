@@ -2,7 +2,7 @@ package au.com.outware.neanderthal.util.extensions
 
 import android.app.Activity
 import android.content.Intent
-import android.support.annotation.MenuRes
+import androidx.annotation.MenuRes
 import android.view.Menu
 import kotlin.reflect.KClass
 

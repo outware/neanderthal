@@ -1,6 +1,6 @@
 package au.com.outware.neanderthal.presentation.adapter.delegate
 
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import au.com.outware.neanderthal.R
 import au.com.outware.neanderthal.data.model.Variant
@@ -23,10 +23,10 @@ class NamePropertyAdapterDelegate(val variant: Variant,
         }
     }
 
-    override fun createViewHolder(parent: ViewGroup): RecyclerView.ViewHolder =
+    override fun createViewHolder(parent: ViewGroup): androidx.recyclerview.widget.RecyclerView.ViewHolder =
             SimpleViewHolder(parent.inflateLayout(R.layout.neanderthal_item_variant_name))
 
-    override fun bindViewHolder(items: List<Field>, position: Int, holder: RecyclerView.ViewHolder) {
+    override fun bindViewHolder(items: List<Field>, position: Int, holder: androidx.recyclerview.widget.RecyclerView.ViewHolder) {
         holder.itemView.nameValue.setOnTextChangedListener { text ->
             variant.name = text.toString()
         }

@@ -133,9 +133,9 @@ install.dependsOn "assembleRelease"
 dependencies {
     implementation 'com.google.code.gson:gson:2.4',
             // Support
-            "com.android.support:appcompat-v7:$supportLibraryVersion",
-            "com.android.support:design:$supportLibraryVersion",
-            "com.android.support:recyclerview-v7:$supportLibraryVersion",
+            'androidx.appcompat:appcompat:1.0.0',
+            'com.google.android.material:material:1.0.0',
+            'androidx.recyclerview:recyclerview:1.0.0',
             // Kotlin
             "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 }

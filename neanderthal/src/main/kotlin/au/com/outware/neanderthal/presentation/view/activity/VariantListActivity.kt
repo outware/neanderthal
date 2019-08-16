@@ -8,9 +8,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -47,7 +47,7 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         }
         presenter.onCreate(args)
 
-        variantList.layoutManager = LinearLayoutManager(this)
+        variantList.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         variantList.addItemDecoration(DividerItemDecoration(this, android.R.drawable.divider_horizontal_bright))
         variantList.adapter = adapter
     }
