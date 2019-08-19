@@ -1,7 +1,7 @@
 package au.com.outware.neanderthalsample;
 
 import android.app.Application;
-import androidx.appcompat.app.AppCompatDelegate;
+import android.support.v7.app.AppCompatDelegate;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

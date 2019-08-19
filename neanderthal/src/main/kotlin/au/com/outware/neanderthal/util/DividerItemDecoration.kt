@@ -3,13 +3,13 @@ package au.com.outware.neanderthal.util
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.drawable.Drawable
-import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
+import android.support.v4.content.ContextCompat
+import android.support.v7.widget.RecyclerView
 
 /**
  * @author timmutton
  */
-class DividerItemDecoration : androidx.recyclerview.widget.RecyclerView.ItemDecoration {
+class DividerItemDecoration : RecyclerView.ItemDecoration {
 
     private val divider: Drawable
 
@@ -29,7 +29,7 @@ class DividerItemDecoration : androidx.recyclerview.widget.RecyclerView.ItemDeco
         divider = ContextCompat.getDrawable(context, resId)!!
     }
 
-    override fun onDraw(c: Canvas, parent: androidx.recyclerview.widget.RecyclerView, state: androidx.recyclerview.widget.RecyclerView.State) {
+    override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         val left = parent.paddingLeft
         val right = parent.width - parent.paddingRight
 
@@ -37,7 +37,7 @@ class DividerItemDecoration : androidx.recyclerview.widget.RecyclerView.ItemDeco
         for (i in 0..childCount - 1) {
             val child = parent.getChildAt(i)
 
-            val params = child.layoutParams as androidx.recyclerview.widget.RecyclerView.LayoutParams
+            val params = child.layoutParams as RecyclerView.LayoutParams
 
             val top = child.bottom + params.bottomMargin
             val bottom = top + divider.intrinsicHeight

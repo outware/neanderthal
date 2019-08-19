@@ -1,6 +1,6 @@
 package au.com.outware.neanderthal.presentation.adapter
 
-import androidx.recyclerview.widget.RecyclerView
+import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import au.com.outware.neanderthal.data.model.Variant
 import au.com.outware.neanderthal.presentation.adapter.delegate.*
@@ -13,7 +13,7 @@ import java.util.*
 /**
  * @author Tim Mutton
  */
-class PropertyAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>(),
+class PropertyAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
         EditVariantPresenter.AdapterSurface {
     companion object {
         private val VIEW_TYPE_VARIANT_NAME = 0
@@ -67,8 +67,8 @@ class PropertyAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<androi
         return viewType
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
-        var viewHolder: androidx.recyclerview.widget.RecyclerView.ViewHolder? = null
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        var viewHolder: RecyclerView.ViewHolder? = null
 
         for(delegate in delegates) {
             if(viewType == delegate.viewType) {
@@ -84,7 +84,7 @@ class PropertyAdapter : androidx.recyclerview.widget.RecyclerView.Adapter<androi
         return viewHolder
     }
 
-    override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val viewType = holder.itemViewType
         for(delegate in delegates) {
             if(delegate.viewType == viewType) {

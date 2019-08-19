@@ -1,6 +1,6 @@
 package au.com.outware.neanderthal.util.extensions
 
-import androidx.annotation.LayoutRes
+import android.support.annotation.LayoutRes
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

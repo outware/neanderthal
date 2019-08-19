@@ -1,6 +1,6 @@
 package au.com.outware.neanderthal.presentation.adapter.delegate
 
-import androidx.recyclerview.widget.RecyclerView
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.ViewGroup
 import au.com.outware.neanderthal.R
@@ -26,10 +26,10 @@ class CharacterSequencePropertyAdapterDelegate(val variant: Variant,
         return CharSequence::class.java.isAssignableFrom(propertyType)
     }
 
-    override fun createViewHolder(parent: ViewGroup): androidx.recyclerview.widget.RecyclerView.ViewHolder =
+    override fun createViewHolder(parent: ViewGroup): RecyclerView.ViewHolder =
             SimpleViewHolder(parent.inflateLayout(R.layout.neanderthal_item_detail_text))
 
-    override fun bindViewHolder(items: List<Field>, position: Int, holder: androidx.recyclerview.widget.RecyclerView.ViewHolder) = with(holder.itemView) {
+    override fun bindViewHolder(items: List<Field>, position: Int, holder: RecyclerView.ViewHolder) = with(holder.itemView) {
         val configurationProperty = items[position - if (setVariantName) 1 else 0]
 
         textKey.text = PropertyAdapter.getPropertyName(configurationProperty)

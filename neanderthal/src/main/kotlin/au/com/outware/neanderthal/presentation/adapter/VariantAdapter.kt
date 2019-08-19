@@ -1,6 +1,6 @@
 package au.com.outware.neanderthal.presentation.adapter
 
-import androidx.recyclerview.widget.RecyclerView
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +12,7 @@ import java.util.*
  * @author timmutton
  */
  class VariantAdapter(var clickListener: (String, Int) -> Unit) :
-        androidx.recyclerview.widget.RecyclerView.Adapter<VariantAdapter.ViewHolder>(), VariantListPresenter.AdapterSurface {
+        RecyclerView.Adapter<VariantAdapter.ViewHolder>(), VariantListPresenter.AdapterSurface {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater
@@ -57,7 +57,7 @@ import java.util.*
         notifyItemRemoved(index)
     }
 
-    class ViewHolder(val view: View): androidx.recyclerview.widget.RecyclerView.ViewHolder(view) {
+    class ViewHolder(val view: View): RecyclerView.ViewHolder(view) {
         val checkedTextView: CheckedTextView
         init {
             checkedTextView = view as CheckedTextView

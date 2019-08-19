@@ -26,6 +26,6 @@ android {
 dependencies {
     debugImplementation project(':neanderthal')
     releaseImplementation project(':neanderthal-no-op')
-    implementation 'androidx.appcompat:appcompat:1.0.0',
+    implementation 'com.android.support:appcompat-v7:23.3.0',
             'com.google.code.gson:gson:2.4'
 }

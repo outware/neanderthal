@@ -1,13 +1,21 @@
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layoutRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-   <androidx.recyclerview.widget.RecyclerView
+   <android.support.v7.widget.RecyclerView
         android:id="@+id/variantList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/buttonAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/neanderthal_activity_margin"
+        android:src="@drawable/neanderthal_ic_add_white_24dp"
+        app:elevation="4dp"/>
+</android.support.design.widget.CoordinatorLayout>

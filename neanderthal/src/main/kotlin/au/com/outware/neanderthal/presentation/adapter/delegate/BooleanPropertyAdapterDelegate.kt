@@ -1,6 +1,6 @@
 package au.com.outware.neanderthal.presentation.adapter.delegate
 
-import androidx.recyclerview.widget.RecyclerView
+import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import au.com.outware.neanderthal.R
 import au.com.outware.neanderthal.data.model.Variant
@@ -25,10 +25,10 @@ class BooleanPropertyAdapterDelegate(val variant: Variant,
         return propertyType == Boolean::class.java
     }
 
-    override fun createViewHolder(parent: ViewGroup): androidx.recyclerview.widget.RecyclerView.ViewHolder =
+    override fun createViewHolder(parent: ViewGroup): RecyclerView.ViewHolder =
             SimpleViewHolder(parent.inflateLayout(R.layout.neanderthal_item_detail_checkbox))
 
-    override fun bindViewHolder(items: List<Field>, position: Int, holder: androidx.recyclerview.widget.RecyclerView.ViewHolder) = with(holder.itemView) {
+    override fun bindViewHolder(items: List<Field>, position: Int, holder: RecyclerView.ViewHolder) = with(holder.itemView) {
         val configurationProperty = items[position - if (setVariantName) 1 else 0]
         checkboxKey.text = PropertyAdapter.getPropertyName(configurationProperty)
         checkboxValue.setOnCheckedChangeListener {

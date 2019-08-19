@@ -1,9 +1,9 @@
 package au.com.outware.neanderthal.presentation.view.activity
 
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
+import android.support.v7.app.AlertDialog
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import au.com.outware.neanderthal.R
@@ -49,7 +49,7 @@ class EditVariantActivity : AppCompatActivity(), EditVariantPresenter.ViewSurfac
         supportActionBar?.setDisplayShowHomeEnabled(true)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        propertyList.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
+        propertyList.layoutManager = LinearLayoutManager(this)
         propertyList.adapter = adapter
 
         if(intent.hasExtra(EditVariantPresenter.ViewSurface.EXTRA_NAME)) {
