@@ -10,12 +10,4 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/buttonAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/neanderthal_activity_margin"
-        android:src="@drawable/neanderthal_ic_add_white_24dp"
-        app:elevation="4dp"/>
 </android.support.design.widget.CoordinatorLayout>
