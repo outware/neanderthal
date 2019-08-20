@@ -30,6 +30,6 @@
     <string name="neanderthal_positive_button">OK</string>
 
     <string name="neanderthal_done">Done</string>
-    <string name="neanderthal_reset_default_values">Reset to default</string>
+    <string name="neanderthal_reset_default_values">Reset to defaults</string>
 
 </resources>
