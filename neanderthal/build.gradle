@@ -20,7 +20,7 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlinVersion"
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
     }
 }
@@ -111,6 +111,8 @@ bintray {
     user = properties.getProperty("bintray.user")
     key = properties.getProperty("bintray.apikey")
 
+    override = true
+
     configurations = ['archives']
     pkg {
         repo = bintrayRepo
@@ -133,9 +135,9 @@ install.dependsOn "assembleRelease"
 dependencies {
     implementation 'com.google.code.gson:gson:2.4',
             // Support
-            "com.android.support:appcompat-v7:$supportLibraryVersion",
-            "com.android.support:design:$supportLibraryVersion",
-            "com.android.support:recyclerview-v7:$supportLibraryVersion",
+            'androidx.appcompat:appcompat:1.0.0',
+            'com.google.android.material:material:1.0.0',
+            'androidx.recyclerview:recyclerview:1.0.0',
             // Kotlin
             "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 }
