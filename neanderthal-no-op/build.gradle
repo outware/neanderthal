@@ -1,41 +1,15 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.github.dcendents.android-maven'
-apply plugin: 'com.jfrog.bintray'
 
 buildscript {
     repositories {
         jcenter()
         mavenCentral()
     }
-
-    dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
-    }
 }
 
 ext {
-    bintrayRepo = 'maven'
     bintrayName = 'neanderthal-no-op'
-
-    publishedGroupId = 'au.com.outware'
-    libraryName = 'neanderthal'
     artifact = 'neanderthal-no-op'
-
-    libraryDescription = 'Neanderthal is a library that allows you to create and modify configuration environments for Android applications at run time.'
-
-    siteUrl = 'https://github.com/outware/neanderthal/'
-    gitUrl = 'https://github.com/outware/neanderthal.git'
-
-    libraryVersion = "${libraryVersion}"
-
-    developerId = 'outware'
-    developerName = 'Outware Mobile'
-    developerEmail = 'technology@outware.com.au'
-
-    licenseName = 'MIT'
-    licenseUrl = 'https://opensource.org/licenses/MIT'
-    allLicenses = ["MIT"]
 }
 
 android {
@@ -77,35 +51,3 @@ artifacts {
     archives javadocJar
     archives sourcesJar
 }
-
-group = publishedGroupId
-version = libraryVersion
-
-// Bintray
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
-bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
-
-    override = true
-
-    configurations = ['archives']
-    pkg {
-        repo = bintrayRepo
-        name = bintrayName
-        desc = libraryDescription
-        websiteUrl = siteUrl
-        vcsUrl = gitUrl
-        licenses = allLicenses
-        publish = true
-        publicDownloadNumbers = true
-        version {
-            desc = libraryDescription
-        }
-    }
-}
-
-bintrayUpload.dependsOn "install"
-install.dependsOn "assembleRelease"

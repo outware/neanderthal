@@ -2,8 +2,9 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
 apply plugin: 'com.jfrog.bintray'
-apply plugin: 'com.getkeepsafe.dexcount'
 apply plugin: 'kotlin-kapt'
 
 buildscript {
@@ -20,33 +21,12 @@ buildscript {
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlinVersion"
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.4.1'
     }
 }
 
 ext {
-    bintrayRepo = 'maven'
     bintrayName = 'neanderthal'
-
-    publishedGroupId = 'au.com.outware'
-    libraryName = 'neanderthal'
     artifact = 'neanderthal'
-
-    libraryDescription = 'Neanderthal is a library that allows you to create and modify configuration environments for Android applications at run time.'
-
-    siteUrl = 'https://github.com/outware/neanderthal/'
-    gitUrl = 'https://github.com/outware/neanderthal.git'
-
-    libraryVersion = "${libraryVersion}"
-
-    developerId = 'outware'
-    developerName = 'Outware Mobile'
-    developerEmail = 'technology@outware.com.au'
-
-    licenseName = 'MIT'
-    licenseUrl = 'https://opensource.org/licenses/MIT'
-    allLicenses = ["MIT"]
 }
 
 android {
@@ -61,6 +41,10 @@ android {
         versionName "${libraryVersion}"
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -72,11 +56,23 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
         test.java.srcDirs += 'src/test/kotlin'
     }
+
 }
 
 kapt {
     generateStubs = true
 }
+
+dependencies {
+    implementation 'com.google.code.gson:gson:2.8.5'
+    // Support
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    // Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+}
+
 
 // custom tasks for creating source/javadoc jars
 task sourcesJar(type: Jar) {
@@ -85,12 +81,11 @@ task sourcesJar(type: Jar) {
 }
 
 task javadoc(type: Javadoc) {
-    failOnError false
     source = android.sourceSets.main.java.sourceFiles
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
 }
 
-task javadocJar(type: Jar, dependsOn: 'javadoc') {
+task javadocJar(type: Jar, dependsOn: "javadoc") {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
@@ -98,46 +93,4 @@ task javadocJar(type: Jar, dependsOn: 'javadoc') {
 artifacts {
     archives javadocJar
     archives sourcesJar
-}
-
-group = publishedGroupId
-version = libraryVersion
-
-// Bintray
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
-bintray {
-    user = properties.getProperty("bintray.user")
-    key = properties.getProperty("bintray.apikey")
-
-    override = true
-
-    configurations = ['archives']
-    pkg {
-        repo = bintrayRepo
-        name = bintrayName
-        desc = libraryDescription
-        websiteUrl = siteUrl
-        vcsUrl = gitUrl
-        licenses = allLicenses
-        publish = true
-        publicDownloadNumbers = true
-        version {
-            desc = libraryDescription
-        }
-    }
-}
-
-bintrayUpload.dependsOn "install"
-install.dependsOn "assembleRelease"
-
-dependencies {
-    implementation 'com.google.code.gson:gson:2.4',
-            // Support
-            'androidx.appcompat:appcompat:1.0.0',
-            'com.google.android.material:material:1.0.0',
-            'androidx.recyclerview:recyclerview:1.0.0',
-            // Kotlin
-            "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 }
