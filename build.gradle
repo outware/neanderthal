@@ -27,6 +27,7 @@ allprojects {
             name 'Google'
         }
     }
+
     ext {
         bintrayRepo = 'maven'
         publishedGroupId = 'au.com.outware'
@@ -47,8 +48,4 @@ allprojects {
         licenseUrl = 'https://opensource.org/licenses/MIT'
         allLicenses = ["MIT"]
     }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }
