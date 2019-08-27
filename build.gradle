@@ -4,10 +4,17 @@ buildscript {
     repositories {
         jcenter()
         mavenLocal()
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.0'
-        classpath 'com.getkeepsafe.dexcount:dexcount-gradle-plugin:0.5.5'
+        classpath 'com.android.tools.build:gradle:3.4.2'
+        // Required plugins added to classpath to facilitate pushing to JCenter/Bintray
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
+
     }
 }
 
@@ -15,9 +22,30 @@ allprojects {
     repositories {
         jcenter()
         mavenCentral()
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
     }
-}
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+    ext {
+        bintrayRepo = 'maven'
+        publishedGroupId = 'au.com.outware'
+        libraryName = 'neanderthal'
+
+        libraryDescription = 'Neanderthal is a library that allows you to create and modify configuration environments for Android applications at run time.'
+
+        siteUrl = 'https://github.com/outware/neanderthal/'
+        gitUrl = 'https://github.com/outware/neanderthal.git'
+
+        libraryVersion = "${libraryVersion}"
+
+        developerId = 'outware'
+        developerName = 'Outware Mobile'
+        developerEmail = 'technology@outware.com.au'
+
+        licenseName = 'MIT'
+        licenseUrl = 'https://opensource.org/licenses/MIT'
+        allLicenses = ["MIT"]
+    }
 }

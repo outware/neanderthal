@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/neanderthal_menu_item_delete"
+          android:icon="@drawable/neanderthal_ic_delete_white_24dp"
+          android:title="@string/neanderthal_delete"
+          app:showAsAction="never"
+          android:showAsAction="always"
+          tools:ignore="AlwaysShowAction,AppCompatResource" />
     <item android:id="@+id/menu_item_done"
         android:icon="@drawable/neanderthal_ic_done_white_24dp"
         android:title="@string/neanderthal_done"
         app:showAsAction="always" />
+
 </menu>

@@ -8,11 +8,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import au.com.outware.neanderthal.R
 import au.com.outware.neanderthal.presentation.adapter.VariantAdapter
 import au.com.outware.neanderthal.presentation.presenter.EditVariantPresenter
@@ -46,33 +47,30 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         }
         presenter.onCreate(args)
 
-        variantList.layoutManager = LinearLayoutManager(this)
+        variantList.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
         variantList.addItemDecoration(DividerItemDecoration(this, android.R.drawable.divider_horizontal_bright))
         variantList.adapter = adapter
-
-        buttonAdd.setOnClickListener { view -> presenter.onAddClicked() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?) = inflateMenu(R.menu.neanderthal_menu_variant_list, menu)
 
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu?.let {
+            menu.findItem(R.id.neanderthal_menu_item_edit).isVisible = allowEditing
+        }
+
+        return super.onPrepareOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId) {
+            R.id.neanderthal_menu_item_add -> presenter.onAddClicked()
             R.id.neanderthal_menu_item_edit -> presenter.onEditClicked()
-            R.id.neanderthal_menu_item_delete -> presenter.onDeleteClicked()
             R.id.neanderthal_menu_item_launch_application -> presenter.onLaunchClicked()
             R.id.neanderthal_menu_item_reset -> presenter.onResetToDefaultClicked()
         }
 
         return super.onOptionsItemSelected(item)
-    }
-
-    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        menu?.let {
-            menu.findItem(R.id.neanderthal_menu_item_delete).setVisible(allowEditing)
-            menu.findItem(R.id.neanderthal_menu_item_edit).setVisible(allowEditing)
-        }
-
-        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onPause() {
@@ -114,25 +112,11 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
             launchIntent = Intent()
             launchIntent.component = ComponentName(this, resolveInfo.activityInfo.name)
         }
-
-        val pendingIntent = PendingIntent.getActivity(this, 0, launchIntent, Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val manager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        manager.set(AlarmManager.RTC, System.currentTimeMillis(), pendingIntent)
-        exit(0)
-    }
-
-    override fun createDeleteConfirmation() {
-        dialog = AlertDialog.Builder(this)
-                .setTitle(R.string.neanderthal_delete_title)
-                .setMessage(R.string.neanderthal_delete_message)
-                .setPositiveButton(R.string.neanderthal_delete_positive) { dialog, which -> presenter.onDeleteConfirmation(true) }
-                .setNegativeButton(R.string.neanderthal_cancel) { dialog, which -> presenter.onDeleteConfirmation(false) }
-                .show()
-    }
-
-    override fun dismissDeleteConfirmation() {
-        dialog?.dismiss()
-        this.dialog = null
+        // Updating the logic to restart the app as the prior got depricated with Android Q
+        launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // In case we are called with non-Activity context.
+        startActivity(launchIntent);
+        finish();
+        Runtime.getRuntime().exit(0);
     }
 
     override fun createResetConfirmation() {
@@ -150,18 +134,14 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
     }
 
     override fun notifyDeleted() {
-        layoutRoot.snackbar(R.string.neanderthal_delete_notice_message) {
-            action(R.string.neanderthal_delete_notice_action) {
-                presenter.onUndoClicked()
-            }
-        }
+        Toast.makeText(this, R.string.neanderthal_delete_notice_action, Toast.LENGTH_SHORT).show()
     }
 
     override fun notifyReset() {
-        layoutRoot.snackbar(R.string.neanderthal_reset_notice_message)
+        Toast.makeText(this, R.string.neanderthal_reset_notice_message, Toast.LENGTH_SHORT).show()
     }
 
-    override fun setEditingEnabled(enabled : Boolean){
+    override fun setEditingEnabled(enabled: Boolean){
         allowEditing = enabled
         invalidateOptionsMenu()
     }
