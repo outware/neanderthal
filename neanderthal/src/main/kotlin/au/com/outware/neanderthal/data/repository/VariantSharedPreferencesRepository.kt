@@ -74,6 +74,7 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
         baseVariants.forEach { variant ->
             editor.putString(variant.key + VARIANT_DEFAULT, gson.toJson(variant.value))
         }
+        editor.apply()
     }
 
     override fun addVariant(variant: Variant) {
