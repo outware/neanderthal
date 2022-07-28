@@ -9,14 +9,14 @@ import java.util.*
  * @author timmutton
  */
 class VariantListPresenter constructor(val view: ViewSurface,
-                                               val adapter: AdapterSurface): Presenter {
+                                       val adapter: AdapterSurface): Presenter {
     private var variants: ArrayList<String> = ArrayList<String>()
     private var currentVariantName: String? = null
     private var currentPosition = 0
 
     // region Lifecycle
     override fun onCreate(parameters: Bundle?) {
-        variants.addAll(getVariantNames())
+        getVariantNames()?.let { variants.addAll(it) }
         if(variants.isNotEmpty()) {
             currentVariantName = Neanderthal.variantRepository?.getCurrentVariant()?.name ?: variants.first()
             currentPosition = variants.indexOf(currentVariantName!!)
@@ -61,7 +61,7 @@ class VariantListPresenter constructor(val view: ViewSurface,
             Neanderthal.variantRepository?.resetVariants()
             variants.clear()
 
-            variants.addAll(getVariantNames())
+            getVariantNames()?.let { variants.addAll(it) }
 
             variants.sort()
             adapter.add(variants)
@@ -83,9 +83,9 @@ class VariantListPresenter constructor(val view: ViewSurface,
         view.setEditingEnabled(variants.size != 0)
     }
 
-    fun getVariantNames(): List<String> {
+    fun getVariantNames(): List<String>? {
         Neanderthal.variantRepository?.let {
-            return it.getVariants().map { variant -> variant.name!! }.toList()
+            return it.getVariants()?.map { variant -> variant.name!! }?.toList()
         }
         return emptyList<String>()
     }
