@@ -9,7 +9,7 @@ interface VariantRepository {
     fun addVariant(variant: Variant)
     fun removeVariant(name: String)
 
-    fun getVariants(): List<Variant>
+    fun getVariants(): List<Variant>?
     fun getVariant(name: String): Variant?
 
     fun setCurrentVariant(name: String)

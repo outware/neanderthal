@@ -98,22 +98,22 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
         var launchIntent = packageManager.getLaunchIntentForPackage(packageName)
 
         // If neanderthal is the default launch intent
-        if(launchIntent.component.className.equals(localClassName)) {
+        if(launchIntent?.component?.className.equals(localClassName)) {
             // Filter for main intents for this package
             val filterIntent = Intent(Intent.ACTION_MAIN)
             filterIntent.setPackage(packageName)
 
             // Get the first that isnt the current class
             val resolveInfo = packageManager.queryIntentActivities(filterIntent, PackageManager.GET_RESOLVED_FILTER)
-                    .filter { info -> !info.activityInfo.name.equals(localClassName) }
-                    .first()
+                .filter { info -> !info.activityInfo.name.equals(localClassName) }
+                .first()
 
             // Launch the activity
             launchIntent = Intent()
             launchIntent.component = ComponentName(this, resolveInfo.activityInfo.name)
         }
         // Updating the logic to restart the app as the prior got depricated with Android Q
-        launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // In case we are called with non-Activity context.
+        launchIntent?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // In case we are called with non-Activity context.
         startActivity(launchIntent);
         finish();
         Runtime.getRuntime().exit(0);
@@ -121,11 +121,11 @@ class VariantListActivity : AppCompatActivity(), VariantListPresenter.ViewSurfac
 
     override fun createResetConfirmation() {
         dialog = AlertDialog.Builder(this)
-                .setTitle(R.string.neanderthal_reset_title)
-                .setMessage(R.string.neanderthal_reset_message)
-                .setPositiveButton(R.string.neanderthal_reset_positive) { dialog, which -> presenter.onResetConfirmation(true) }
-                .setNegativeButton(R.string.neanderthal_cancel) { dialog, which -> presenter.onResetConfirmation(false) }
-                .show()
+            .setTitle(R.string.neanderthal_reset_title)
+            .setMessage(R.string.neanderthal_reset_message)
+            .setPositiveButton(R.string.neanderthal_reset_positive) { dialog, which -> presenter.onResetConfirmation(true) }
+            .setNegativeButton(R.string.neanderthal_cancel) { dialog, which -> presenter.onResetConfirmation(false) }
+            .show()
     }
 
     override fun dismissResetConfirmation() {

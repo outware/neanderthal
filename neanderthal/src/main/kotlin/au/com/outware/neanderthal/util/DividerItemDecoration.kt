@@ -11,15 +11,17 @@ import androidx.recyclerview.widget.RecyclerView
  */
 class DividerItemDecoration : androidx.recyclerview.widget.RecyclerView.ItemDecoration {
 
-    private val divider: Drawable
+    private var divider: Drawable? = null
 
     /**
      * Default divider will be used
      */
     constructor(context: Context) {
         val styledAttributes = context.obtainStyledAttributes(ATTRS)
-        divider = styledAttributes.getDrawable(0)
-        styledAttributes.recycle()
+        if(styledAttributes!=null) {
+            divider = styledAttributes.getDrawable(0)
+            styledAttributes.recycle()
+        }
     }
 
     /**
@@ -40,10 +42,10 @@ class DividerItemDecoration : androidx.recyclerview.widget.RecyclerView.ItemDeco
             val params = child.layoutParams as androidx.recyclerview.widget.RecyclerView.LayoutParams
 
             val top = child.bottom + params.bottomMargin
-            val bottom = top + divider.intrinsicHeight
+            val bottom = top + (divider?.intrinsicHeight ?: 0)
 
-            divider.setBounds(left, top, right, bottom)
-            divider.draw(c)
+            divider?.setBounds(left, top, right, bottom)
+            divider?.draw(c)
         }
     }
 
