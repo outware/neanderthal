@@ -6,13 +6,20 @@ This serves a similar purpose to setting build variables for different variants,
 
 ##Usage
 
-1. 1. Add it to your root build.gradle at the end of repositories:
- 	allprojects {
+1. Add it to your root build.gradle at the end of repositories:
+
+	allprojects {
+	
 		repositories {
+		
 			...
+			
 			maven { url 'https://jitpack.io' }
+			
 		}
+		
 	}
+	
 2. Add `implementation 'com.github.outware.neanderthal:neanderthal:v1.7.1'` to your application's dependencies.
 3. Call `Neanderthal.initialise()`` to initialise the library by supplying a Context, an initial list of variants and
 the name of the default variant.
