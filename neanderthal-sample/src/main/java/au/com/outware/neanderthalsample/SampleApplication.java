@@ -39,6 +39,8 @@ public class SampleApplication extends Application {
     // An example of how you could initialise Neanderthal from a local JSON file
     private void initialiseFromJson(){
         try {
+			// The type adapter is only needed if you have a CharSequence in your model. If you're just using strings
+        	// you can just use Gson gson = new Gson();
             Gson gson = new GsonBuilder().registerTypeAdapter(CharSequence.class, new CharSequenceDeserializer()).create();
             Reader reader = new InputStreamReader(getAssets().open(VARIANTS_FILE));
             BaseVariants baseVariants = gson.fromJson(reader, BaseVariants.class);

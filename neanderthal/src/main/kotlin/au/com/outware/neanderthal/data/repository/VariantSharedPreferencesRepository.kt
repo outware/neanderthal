@@ -12,10 +12,12 @@ import java.util.*
 /**
  * @author timmutton
  */
-class VariantSharedPreferencesRepository(val klass: Class<out Any>,
-                                         val context: Context,
-                                         baseVariants: Map<String, Any>,
-                                         defaultVariant: String): VariantRepository {
+class VariantSharedPreferencesRepository(
+    val klass: Class<out Any>,
+    val context: Context,
+    baseVariants: Map<String, Any>,
+    defaultVariant: String
+) : VariantRepository {
     companion object {
         const val SHARED_PREFERENCES_FILE_NAME = "_neanderthal_preferences"
         const val VARIANT_LIST = "variant_list"
@@ -27,15 +29,20 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
     }
 
     private val sharedPreferences: SharedPreferences
-    private val editor: SharedPreferences.Editor
-    private val gson: Gson = GsonBuilder().registerTypeAdapter(CharSequence::class.java, CharSequenceDeserializer()).create()
+    private var editor: SharedPreferences.Editor
+    private val gson: Gson =
+        GsonBuilder().registerTypeAdapter(CharSequence::class.java, CharSequenceDeserializer())
+            .create()
 
     init {
         val formattedPackageName = context.packageName.capitalize().replace(".", "_")
-        sharedPreferences = context.getSharedPreferences("$formattedPackageName$SHARED_PREFERENCES_FILE_NAME", Context.MODE_PRIVATE)
+        sharedPreferences = context.getSharedPreferences(
+            "$formattedPackageName$SHARED_PREFERENCES_FILE_NAME",
+            Context.MODE_PRIVATE
+        )
         editor = sharedPreferences.edit()
 
-        if(!baseVariants.containsKey(defaultVariant)) {
+        if (!baseVariants.containsKey(defaultVariant)) {
             editor.clear()
             throw IllegalArgumentException("You must declare a valid default variant")
         }
@@ -46,12 +53,13 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
             .toHashSet()
         val variantStructure = sharedPreferences.getStringSet(VARIANT_STRUCTURE, structure)
         if (variantStructure != null && !variantStructure.equals(structure)) {
-            editor.clear()
+            editor.clear().apply()
         }
 
         storeDefaults(baseVariants)
 
         if (!sharedPreferences.contains(VARIANT_LIST)) {
+            editor = sharedPreferences.edit()
             editor.putStringSet(VARIANT_LIST, baseVariants.keys)
 
             for (variant in baseVariants) {
@@ -68,8 +76,10 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
     }
 
     private fun storeDefaults(baseVariants: Map<String, Any>) {
+        editor = sharedPreferences.edit()
         editor.putStringSet(DEFAULT_VARIANT_LIST,
-            baseVariants.map { variant -> variant.key + VARIANT_DEFAULT }.toSet())
+            baseVariants.map { variant -> variant.key + VARIANT_DEFAULT }.toSet()
+        )
 
         baseVariants.forEach { variant ->
             editor.putString(variant.key + VARIANT_DEFAULT, gson.toJson(variant.value))
@@ -100,8 +110,13 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
         val variants = variantNames?.let { ArrayList<Variant>(it.size) }
 
         if (variantNames != null) {
-            for(name in variantNames) {
-                variants?.add(Variant(name, gson.fromJson(sharedPreferences.getString(name, null), klass)))
+            for (name in variantNames) {
+                variants?.add(
+                    Variant(
+                        name,
+                        gson.fromJson(sharedPreferences.getString(name, null), klass)
+                    )
+                )
             }
         }
 
@@ -109,7 +124,7 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
     }
 
     override fun getVariant(name: String): Variant? {
-        if(sharedPreferences.contains(name)) {
+        if (sharedPreferences.contains(name)) {
             return Variant(name, gson.fromJson(sharedPreferences.getString(name, null), klass))
         } else {
             return null
@@ -121,26 +136,29 @@ class VariantSharedPreferencesRepository(val klass: Class<out Any>,
     }
 
     override fun getCurrentVariant(): Variant? {
-        if(!sharedPreferences.contains(CURRENT_VARIANT)) {
+        if (!sharedPreferences.contains(CURRENT_VARIANT)) {
             return null
         }
 
         val name = sharedPreferences.getString(CURRENT_VARIANT, null);
 
-        if(sharedPreferences.contains(name)) {
+        if (sharedPreferences.contains(name)) {
             return Variant(name, gson.fromJson(sharedPreferences.getString(name, null), klass))
         } else {
             return null
         }
     }
 
-    override fun resetVariants(){
+    override fun resetVariants() {
         getVariants()?.forEach { variant ->
             removeVariant(variant.name!!)
         }
 
         sharedPreferences.getStringSet(DEFAULT_VARIANT_LIST, emptySet())?.map { name ->
-            Variant(name.removeSuffix(VARIANT_DEFAULT), gson.fromJson(sharedPreferences.getString(name, null), klass))
+            Variant(
+                name.removeSuffix(VARIANT_DEFAULT),
+                gson.fromJson(sharedPreferences.getString(name, null), klass)
+            )
         }?.forEach { variant ->
             addVariant(variant)
         }
