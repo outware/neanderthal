@@ -24,8 +24,8 @@ class Neanderthal {
 
         @Suppress("UNCHECKED_CAST")
         @JvmStatic
-        fun <T> getConfiguration(): T? {
-            return variantRepository?.getCurrentVariant()?.configuration as T?
+        fun <T> getConfiguration(): T {
+            return variantRepository?.getCurrentVariant()?.configuration as T
         }
     }
 }
